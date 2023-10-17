@@ -1,4 +1,6 @@
 abstract class InitialSetup(val fields: Int, val pieces: Int) {
+  assert(fields % 2 == 0, s"number of fields {$fields} is odd!")
+
   def get: Map[Int, Int]
   protected def quarter(q: Int) = ((fields / 4) * q)
 }
