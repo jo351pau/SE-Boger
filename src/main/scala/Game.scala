@@ -1,24 +1,24 @@
 class Game(val fields: List[Field]) {
 
   def this(fields: Int, pieces: Int) =
-    this(Game.create(DefaultInitialSetup(fields, pieces)))
+    this(Game.create(DefaultSetup(fields, pieces)))
 
-  def this(setup: InitialSetup) = this(Game.create(setup))
+  def this(setup: Setup) = this(Game.create(setup))
 
-  def copy(from: Int, to: Int, pieces: Int) : Game = {
-    //TODO: Implement logic to move pieces
+  def copy(from: Int, to: Int, pieces: Int): Game = {
+    // TODO: Implement logic to move pieces
     Game(fields)
   }
 
-  def winner : Option[Player] = Option.empty // TODO
+  def winner: Option[Player] = Option.empty // TODO
 
-  override def toString: String = fields.mkString("  ")
+  override def toString: String = fields.mkString(" ")
 
 }
 
 private object Game {
   def create(
-      setup: InitialSetup
+      setup: Setup
   ): List[Field] = {
     val side = List.tabulate(setup.fields / 2)(index =>
       Field(
