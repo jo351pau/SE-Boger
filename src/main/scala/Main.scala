@@ -1,6 +1,6 @@
-val fields = 24
-val numberOfPieces = 15
-val game: Game = Game(fields, numberOfPieces)
+val NUMBER_OF_FIELDS = 24
+val NUMBER_OF_FIGURES = 15
+val game: Game = Game(NUMBER_OF_FIELDS, NUMBER_OF_FIGURES)
 
 @main def run(): Unit = {
   println(game)

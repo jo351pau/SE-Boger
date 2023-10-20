@@ -11,7 +11,7 @@ class DefaultSetup(fields: Int, pieces: Int) extends Setup(fields, pieces) {
       0 -> Pieces.Most.value,
       quarter(1) -> -Pieces.Most.value,
       quarter(1) - 2 -> -Pieces.End.value,
-      quarter(2) - 1 -> -Pieces.Mid.value
+      quarter(2) - 1 -> Pieces.Mid.value
     )
 
   private enum Pieces(calculate: Int => Int) {
