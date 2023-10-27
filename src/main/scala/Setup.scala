@@ -5,7 +5,7 @@ abstract class Setup(val fields: Int, val pieces: Int) {
 
 class DefaultSetup(fields: Int, pieces: Int) extends Setup(fields, pieces) {
   assert(fields % 4 == 0, s"number of fields must be divisible by 4. {$fields} is not!")
-  assert(fields > 12, s"number of fields must be bigger than {$fields}!")
+  assert(fields >= 12, s"number of fields must be bigger than {$fields}!")
 
   override def get: Map[Int, Int] =
     Map(
