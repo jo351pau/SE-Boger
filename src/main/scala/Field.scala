@@ -4,6 +4,7 @@ class Field(val pieces: Int) {
   
   override def equals(field: Any): Boolean = field.match {
     case f: Field => f.pieces == pieces
+    case i: Int => i == pieces
     case _        => false
   }
 
