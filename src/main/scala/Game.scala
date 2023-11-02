@@ -14,7 +14,7 @@ class Game(val fields: List[Field]) {
       println(
         s"Not possible! ${fields(from).toPositive()} pieces on field $from, tried to move $pieces."
       )
-    else if fields(to).isOccupied() && (fields(from) hasSameSignAs fields(to))
+    else if fields(to).isOccupied() && !(fields(from) hasSameSignAs fields(to))
     then println(s"Not possible! Different players on fields $from and $to.")
     else
       val value = if (fields(from).isNegative()) -pieces else pieces
