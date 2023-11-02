@@ -13,7 +13,7 @@ class SetupSpec extends AnyWordSpec {
     }
 
     "calculate default layout as map: '0 -> 5, 6 -> -5, 4 -> -3, 11 -> 2' " in {
-      DefaultSetup(24, 15).get should equal(
+      DefaultSetup(24, 15).toMap should equal(
         Map(
           0 -> 5,
           6 -> -5,
@@ -24,7 +24,7 @@ class SetupSpec extends AnyWordSpec {
     }
 
     "be a map" in {
-      DefaultSetup(24, 15).get shouldBe a[Map[Int, Int]]
+      DefaultSetup(24, 15).toMap shouldBe a[Map[Int, Int]]
     }
 
   }
