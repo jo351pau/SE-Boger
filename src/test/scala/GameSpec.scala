@@ -35,7 +35,7 @@ class GameSpec extends AnyWordSpec {
       ).toString shouldBe "|5| |/| |/| |-2| |2| |/| |/| |-5|"
     }
     "be |3|, |-3|, |/|, |-5|, |2|, |2|, |-2|, |/|, |5|, |/|, |3|, |-5| when moved 2 pieces from 0 to 4" in {
-      Game(12, 15).copy(0, 4, 2).fields should equal(
+      Game(12, 15).move(0, 4, 2).fields should equal(
         List(3, -3, 0, -5, 2, 2, -2, 0, 5, 0, 3, -5).map(i => Field(i))
       )
     }

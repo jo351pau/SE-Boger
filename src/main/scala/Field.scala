@@ -23,7 +23,11 @@ class Field(val pieces: Int) {
 
   def isEmpty() = pieces == 0
 
-  def hasSameSignAs(that: Field) = this.pieces * that.pieces < 0
+  def getPlayer() = if (pieces == 0) Player.None
+  else if (pieces > 0) Player.White
+  else Player.Black
 
-  def hasEnoughPieces(pieces: Int) = toPositive() - pieces >= 0
+  def hasSameSignAs(that: Field) = this.pieces * that.pieces > 0
+
+  def hasEnoughPieces(pieces: Int) = pieces <= toPositive()
 }
