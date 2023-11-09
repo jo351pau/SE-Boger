@@ -85,9 +85,3 @@ private object Game {
 
   def rollDice(): Int = Random.nextInt(6) + 1
 }
-
-enum Player {
-  case White
-  case Black
-  case None
-}
