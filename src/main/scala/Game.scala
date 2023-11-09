@@ -1,5 +1,6 @@
 import scala.util.Random
-private val MAX_PIECES_ON_FIELD_WHEN_ATTACKING = 1
+import scala.util.Try
+import scala.util.Success
 
 class Game(
     val fields: List[Field],
@@ -12,50 +13,38 @@ class Game(
 
   def this(setup: Setup) = this(Game.create(setup))
 
-  def move(from: Int, to: Int, pieces: Int = 1): Game = {
-    if !(fields(from) hasEnoughPieces pieces) then
-      println(
-        s"Not possible! ${fields(from).toPositive()} pieces on field $from, tried to move $pieces."
-      )
-    else if fields(to).isOccupied() && !(fields(from) hasSameSignAs fields(to))
-    then
-      if (fields(to).toPositive() <= MAX_PIECES_ON_FIELD_WHEN_ATTACKING) then
-        return attack(from, to)
-      else println(s"Not possible! Different players on fields $from and $to.")
-    else
-      val value = if (fields(from).isNegative()) -pieces else pieces
-      return copy(
-        Map(
-          from -> (fields(from) - value),
-          to -> (fields(to) + value)
-        )
-      )
-    this
-  }
+  def move(from: Int, to: Int, pieces: Int = 1): Try[Game] = {
+    Try({
+      if fields(from).isEmpty() then throw EmptyFieldException(from)
 
-  private def attack(from: Int, to: Int): Game = {
-    val value = if (fields(from).isNegative()) -1 else 1
-    fields(from).getPlayer() match {
-      case Player.White =>
-        println("removed black stone")
+      if (!(fields(from) hasSameOccupier fields(to))) {
+        if (fields(to).number > 1) then
+          throw AttackNotPossibleException(from, to, fields(to).number)
+        else {
+          attack(from, to)
+        }
+      } else {
         copy(
           Map(
             from -> (fields(from) - 1),
-            to -> Field(1)
-          ),
-          barBlack = this.barBlack + 1
+            to -> (if (fields(to).isEmpty())
+                     Field(fields(from).occupier)
+                   else (fields(to) + 1))
+          )
         )
-      case Player.Black =>
-        println("removed white stone")
-        copy(
-          Map(
-            from -> (fields(from) + 1),
-            to -> Field(-1)
-          ),
-          barWhite = this.barWhite + 1
-        )
-      case Player.None =>
-        game
+      }
+    })
+  }
+
+  private def attack(from: Int, to: Int): Game = {
+    val changes = Map(
+      from -> (fields(from) - 1),
+      to -> Field(fields(from).occupier)
+    )
+    fields(to).occupier.match {
+      case Player.White => copy(changes, barWhite = this.barWhite + 1)
+      case Player.Black => copy(changes, barBlack = this.barBlack + 1)
+      case Player.None  => this
     }
   }
 
@@ -65,17 +54,14 @@ class Game(
       barBlack: Int = this.barBlack
   ): Game =
     Game(
-      List.tabulate(fields.length)(index =>
-        changes.getOrElse(index, fields(index)),
-      ),
+      List.tabulate(fields.length)(i => changes.getOrElse(i, fields(i))),
       barWhite = barWhite,
       barBlack = barBlack
     )
 
   def winner: Option[Player] =
-    if !fields.exists(_.getPlayer() == Player.White) then Some(Player.White)
-    else if !fields.exists(_.getPlayer() == Player.Black) then
-      Some(Player.Black)
+    if !fields.exists(_.occupier == Player.White) then Some(Player.White)
+    else if !fields.exists(_.occupier == Player.Black) then Some(Player.Black)
     else Option.empty
 
   override def toString: String =
