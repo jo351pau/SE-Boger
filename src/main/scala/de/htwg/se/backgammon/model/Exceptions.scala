@@ -1,3 +1,5 @@
+package de.htwg.se.backgammon.model
+
 class MoveException extends Exception {}
 
 class EmptyFieldException(val position: Int) extends MoveException {

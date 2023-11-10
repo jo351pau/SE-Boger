@@ -1,3 +1,6 @@
+package de.htwg.se.backgammon.model
+
+
 import scala.util.Random
 import scala.util.Try
 import scala.util.Success
@@ -48,7 +51,7 @@ class Game(
     }
   }
 
-  private def copy(
+  def copy(
       changes: Map[Int, Field],
       barWhite: Int = this.barWhite,
       barBlack: Int = this.barBlack

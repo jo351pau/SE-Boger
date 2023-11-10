@@ -1,3 +1,5 @@
+package de.htwg.se.backgammon.model
+
 abstract class Setup(val fields: Int, val pieces: Int) {
   def toMap: Map[Int, Int]
   protected def quarter(q: Int) = ((fields / 4) * q)

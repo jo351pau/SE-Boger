@@ -1,3 +1,5 @@
+package de.htwg.se.backgammon.model
+
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers._
 import scala.util.hashing.Hashing.Default

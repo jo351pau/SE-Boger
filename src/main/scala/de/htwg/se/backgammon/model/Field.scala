@@ -1,3 +1,5 @@
+package de.htwg.se.backgammon.model
+
 class Field(val pieces: Int) {
 
   def this() = this(0)

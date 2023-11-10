@@ -1,24 +1,20 @@
+package de.htwg.se.backgammon
+
 import scala.io.StdIn.readLine
 import scala.util.Success
 import scala.util.Failure
 
+import de.htwg.se.backgammon.model.Game
+import de.htwg.se.backgammon.controller.Controller
+import de.htwg.se.backgammon.view.TUI
+
+
 val NUMBER_OF_FIELDS = 24
 val NUMBER_OF_FIGURES = 15
-val game: Game = Game(NUMBER_OF_FIELDS, NUMBER_OF_FIGURES)
 
 @main def run(): Unit = {
-  startNewRound(game)
-}
-
-def startNewRound(previousGame: Game): Any = {
-  println(previousGame)
-
-  val move =
-    previousGame.move(Integer.parseInt(readLine), Integer.parseInt(readLine), 1)
-  startNewRound(move match {
-    case Success(value: Game) => value
-    case Failure(exception) =>
-      println(s"Not possible!: ${exception.getMessage}")
-      previousGame
-  })
+  val game = new Game(NUMBER_OF_FIELDS, NUMBER_OF_FIGURES)
+  val controller = Controller(game)
+  val tui = TUI(controller)
+  tui.run
 }
