@@ -6,7 +6,7 @@ trait Command[T]:
   def noStep(t: T): T
   def doStep(t: T): Try[T]
 
-class UndoManager[T]:
+class Manager[T]:
   private var stack: List[Command[T]] = Nil
   def doStep(t: T, command: Command[T]): Try[T] =
     stack = command :: stack

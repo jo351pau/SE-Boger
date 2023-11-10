@@ -1,23 +1,51 @@
 package de.htwg.se.backgammon.controller
 
-import de.htwg.se.backgammon.util.* 
-import de.htwg.se.backgammon.model.* 
+import de.htwg.se.backgammon.util.*
+import de.htwg.se.backgammon.model.*
 import scala.util.Try
+import scala.util.Failure
+import scala.util.Success
 
-case class Controller(var game: Game) extends Observable:
-  val undoManager = new UndoManager[Game]
-  def doAndPublish(doThis: Move => Try[Game], move: Move) =
-    game = doThis(move).get
-    PlayerState.next
-    notifyObservers(Event.Move)
-  def doAndPublish(doThis: => Try[Game]) =
-    game = doThis.get
-    notifyObservers(Event.Move)
-  def put(move: Move): Try[Game] = undoManager.doStep(game, PutCommand(move))
+case class Controller(var game: Game) extends Observable {
+  val manager = new Manager[Game]
+  def doAndPublish(doThis: Move => Try[Game], move: Move): Unit = {
+    if checkMove(move) then
+      doThis(move).match {
+        case Success(value: Game) => {
+          game = value
+          PlayerState.next
+          notifyObservers(Event.PlayerChanged)
+          notifyObservers(Event.Move)
+        }
+        case Failure(exception) =>
+          notifyObservers(Event.InvalidMove, Some(exception))
+      }
+  }
+  def put(move: Move): Try[Game] = manager.doStep(game, PutCommand(move))
   def quit: Unit = notifyObservers(Event.Quit)
-  //def get(x: Int, y: Int): String = field.get(x, y).toString
   override def toString = game.toString
 
-  object PlayerState:
-    var player = Player.White
-    def next = if player == Player.White then player = Player.Black else player = Player.White
+  def checkMove(move: Move): Boolean = {
+    game.get(move.from) match {
+      case field if (field.occupier != PlayerState.player) =>
+        NotYourFieldException(
+          move.from,
+          field.occupier,
+          PlayerState.player
+        )
+      case field if (move.isWrongDirection(PlayerState.player)) =>
+        WrongDirectionException(
+          PlayerState.player
+        )
+      case _ => None
+    } match {
+      case ex: Exception => notifyObservers(Event.InvalidMove, Some(ex)); false
+      case _             => true
+    }
+  }
+
+}
+object PlayerState:
+  var player = Player.White
+  def next = if player == Player.White then player = Player.Black
+  else player = Player.White

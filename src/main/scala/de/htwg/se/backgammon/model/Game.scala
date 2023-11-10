@@ -62,6 +62,8 @@ class Game(
       barBlack = barBlack
     )
 
+  def get(position: Int) = fields(position)
+
   def winner: Option[Player] =
     if !fields.exists(_.occupier == Player.White) then Some(Player.White)
     else if !fields.exists(_.occupier == Player.Black) then Some(Player.Black)
