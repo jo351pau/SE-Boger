@@ -1,9 +1,11 @@
 package de.htwg.se.backgammon.view
 
 import scala.io.StdIn.readLine
-import de.htwg.se.backgammon.model.*
-import de.htwg.se.backgammon.util.*
-import de.htwg.se.backgammon.controller.*
+import de.htwg.se.backgammon.model.MoveException
+import de.htwg.se.backgammon.model.Move
+import de.htwg.se.backgammon.util.Event
+import de.htwg.se.backgammon.util.Observer
+import de.htwg.se.backgammon.controller.Controller
 import scala.util.Try
 
 class TUI(controller: Controller) extends Observer:
@@ -20,7 +22,7 @@ class TUI(controller: Controller) extends Observer:
       case Event.InvalidMove =>
         println(s"Not possible! ${ex.getOrElse(MoveException()).getMessage()}")
       case Event.PlayerChanged =>
-        println(s"${PlayerState.player} it's your move!")
+        println(s"${controller.currentPlayer} it's your move!")
 
   def inputLoop(): Unit =
     analyseInput(readLine) match
