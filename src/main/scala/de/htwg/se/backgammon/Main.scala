@@ -1,9 +1,5 @@
 package de.htwg.se.backgammon
 
-import scala.io.StdIn.readLine
-import scala.util.Success
-import scala.util.Failure
-
 import de.htwg.se.backgammon.model.Game
 import de.htwg.se.backgammon.controller.Controller
 import de.htwg.se.backgammon.view.TUI
