@@ -1,6 +1,5 @@
 package de.htwg.se.backgammon.model
 
-
 import scala.util.Random
 import scala.util.Try
 import scala.util.Success
@@ -69,6 +68,13 @@ class Game(
     else if !fields.exists(_.occupier == Player.Black) then Some(Player.Black)
     else Option.empty
 
+  def homeBoards = Map(
+    Player.White -> fields.dropRight(fields.length * (3 / 4)),
+    Player.Black -> fields.drop(fields.length * (3 / 4))
+  )
+
+  val numberOfPieces: Int = fields.map(_.number).sum / 2
+
   override def toString: String =
     s"$barWhite : ${fields.mkString(" ")} : $barBlack"
 
@@ -87,6 +93,4 @@ private object Game {
     )
     side ++ side.map(f => Field(-f.pieces)).reverse
   }
-
-  def rollDice(): Int = Random.nextInt(6) + 1
 }

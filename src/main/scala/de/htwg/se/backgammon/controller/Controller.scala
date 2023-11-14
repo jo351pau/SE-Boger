@@ -11,10 +11,13 @@ import de.htwg.se.backgammon.model.WrongDirectionException
 import scala.util.Try
 import scala.util.Failure
 import scala.util.Success
+import de.htwg.se.backgammon.model.Dice
 
 case class Controller(private val model: Model) extends Observable {
   def game = model.game
+  def previousGame = model.previousGame
   def currentPlayer = model.player
+  def dice = model.diceResults
 
   val manager = new Manager[Game]
   def doAndPublish(doThis: Move => Try[Game], move: Move): Unit = {
@@ -23,6 +26,7 @@ case class Controller(private val model: Model) extends Observable {
         case Success(game: Game) => {
           this.game = game
           nextTurn()
+          roll()
         }
         case Failure(exception) =>
           notifyObservers(Event.InvalidMove, Some(exception))
@@ -40,6 +44,18 @@ case class Controller(private val model: Model) extends Observable {
   private def nextTurn() = {
     model.next; notifyObservers(Event.PlayerChanged)
   }
+
+  private def roll(): (Int, Int) = {
+    model.diceResults = (Dice.roll(), Dice.roll())
+    notifyObservers(Event.DiceRolled); model.diceResults
+  }
+
+  private def hasToBearOff =
+    game.numberOfPieces == game
+      .homeBoards(currentPlayer)
+      .filter(f => f.occupier == currentPlayer)
+      .map(_.number)
+      .sum
 
   private def checkMove(move: Move): Boolean = {
     game.get(move.from) match {

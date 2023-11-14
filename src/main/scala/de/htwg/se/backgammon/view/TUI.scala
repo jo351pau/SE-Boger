@@ -7,22 +7,31 @@ import de.htwg.se.backgammon.util.Event
 import de.htwg.se.backgammon.util.Observer
 import de.htwg.se.backgammon.controller.Controller
 import scala.util.Try
+import de.htwg.se.backgammon.util.PrettyPrint.MarkDifferencesBetweenGames
+import de.htwg.se.backgammon.util.PrettyPrint.PrintDiceResults
+import de.htwg.se.backgammon.util.PrettyPrint.PrintBold
+import de.htwg.se.backgammon.util.PrettyPrint.printNew
 
 class TUI(controller: Controller) extends Observer:
   controller.add(this)
   var continue = true
   def run =
-    println(controller.game)
+    printNew(controller.game); update(Event.DiceRolled)
     inputLoop()
 
-  override def update(e: Event, ex: Option[Throwable]) =
+  override def update(e: Event, ex: Option[Throwable] = None) =
     e match
       case Event.Quit => continue = false
-      case Event.Move => println(controller.game)
+      case Event.Move =>
+        printNew(controller.game markDifferencesTo controller.previousGame)
       case Event.InvalidMove =>
         println(s"Not possible! ${ex.getOrElse(MoveException()).getMessage()}")
       case Event.PlayerChanged =>
-        println(s"${controller.currentPlayer} it's your move!")
+        println(s"${s"${controller.currentPlayer}".bold} it's your move!")
+      case Event.DiceRolled =>
+        println(
+          s"You rolled the dice twice: ${controller.dice.toPrettyString}"
+        )
 
   def inputLoop(): Unit =
     analyseInput(readLine) match

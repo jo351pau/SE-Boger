@@ -15,3 +15,4 @@ enum Event:
   case Move
   case InvalidMove
   case PlayerChanged
+  case DiceRolled
