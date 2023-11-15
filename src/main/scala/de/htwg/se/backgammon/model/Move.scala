@@ -1,8 +1,11 @@
 package de.htwg.se.backgammon.model
 
-case class Move(from: Int, to: Int) {
+private val INVALID_POSITION = 999
 
-  def isWrongDirection(player: Player) = (player == Player.White && from > to)
-    || (player == Player.Black && from < to)
-
+case class Move(
+    val from: Int = INVALID_POSITION,
+    val steps: Int,
+    val player: Player = Player.None
+) {
+  def outOfBar = player != Player.None
 }

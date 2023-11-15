@@ -5,6 +5,7 @@ import de.htwg.se.backgammon.util.Event
 import de.htwg.se.backgammon.util.Manager
 import de.htwg.se.backgammon.model.Model
 import de.htwg.se.backgammon.model.Move
+import de.htwg.se.backgammon.model.Player
 import de.htwg.se.backgammon.model.Game
 import de.htwg.se.backgammon.model.NotYourFieldException
 import de.htwg.se.backgammon.model.WrongDirectionException
@@ -12,21 +13,32 @@ import scala.util.Try
 import scala.util.Failure
 import scala.util.Success
 import de.htwg.se.backgammon.model.Dice
+import de.htwg.se.backgammon.model.DieNotExistException
+import de.htwg.se.backgammon.model.FieldDoesNotExistException
+import de.htwg.se.backgammon.model.MOVES_PER_ROUND
 
 case class Controller(private val model: Model) extends Observable {
   def game = model.game
   def previousGame = model.previousGame
   def currentPlayer = model.player
-  def dice = model.diceResults
+  def dice = model.dice
+  def die: Int = dice(
+    if (model.movesThisRound.length <= model.dice.length - 1)
+      model.movesThisRound.length
+    else model.dice.length - 1
+  )
 
   val manager = new Manager[Game]
   def doAndPublish(doThis: Move => Try[Game], move: Move): Unit = {
     if checkMove(move) then
       doThis(move).match {
         case Success(game: Game) => {
+          this used move.steps
           this.game = game
-          nextTurn()
-          roll()
+          if (model.movesThisRound.length >= MOVES_PER_ROUND) {
+            nextTurn()
+            roll()
+          }
         }
         case Failure(exception) =>
           notifyObservers(Event.InvalidMove, Some(exception))
@@ -37,7 +49,7 @@ case class Controller(private val model: Model) extends Observable {
   override def toString = game.toString
 
   private def game_=(game: Game) = {
-    if model.game != game then
+    if (model.game != game) then
       model.game = game; notifyObservers(Event.Move)
   }
 
@@ -45,10 +57,15 @@ case class Controller(private val model: Model) extends Observable {
     model.next; notifyObservers(Event.PlayerChanged)
   }
 
-  private def roll(): (Int, Int) = {
-    model.diceResults = (Dice.roll(), Dice.roll())
-    notifyObservers(Event.DiceRolled); model.diceResults
+  private def roll(): List[Int] = {
+    model.dice = Dice.roll(MOVES_PER_ROUND)
+    notifyObservers(Event.DiceRolled)
+    if barIsNotEmpty then notifyObservers(Event.BarIsNotEmpty)
+    model.dice
   }
+
+  def barIsNotEmpty =
+    if (currentPlayer == Player.White) game.barWhite > 0 else game.barBlack > 0
 
   private def hasToBearOff =
     game.numberOfPieces == game
@@ -57,23 +74,25 @@ case class Controller(private val model: Model) extends Observable {
       .map(_.number)
       .sum
 
-  private def checkMove(move: Move): Boolean = {
-    game.get(move.from) match {
-      case field if (field.occupier != currentPlayer) =>
-        NotYourFieldException(
-          move.from,
-          field.occupier,
-          currentPlayer
-        )
-      case field if (move.isWrongDirection(currentPlayer)) =>
-        WrongDirectionException(
-          currentPlayer
-        )
-      case _ => None
-    } match {
-      case ex: Exception => notifyObservers(Event.InvalidMove, Some(ex)); false
-      case _             => true
-    }
-  }
+  private def used(dice: Int) = model.dice =
+    model.dice.patch(model.dice.indexOf(dice), Nil, 1)
 
+  private def checkMove(move: Move): Boolean = {
+    if (move.outOfBar) return true
+
+    if move.from >= game.fields.length || move.from < 0 then
+      FieldDoesNotExistException(move.from, move.steps, move.from)
+    else if (game.get(move.from).occupier != currentPlayer) then
+      NotYourFieldException(
+        move.from,
+        game.get(move.from).occupier,
+        currentPlayer
+      )
+    else if (!dice.contains(move.steps)) then
+      DieNotExistException(move.steps, dice)
+    else None
+  } match {
+    case ex: Exception => notifyObservers(Event.InvalidMove, Some(ex)); false
+    case _             => true
+  }
 }

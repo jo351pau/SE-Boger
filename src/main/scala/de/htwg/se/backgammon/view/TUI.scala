@@ -1,16 +1,16 @@
 package de.htwg.se.backgammon.view
 
-import scala.io.StdIn.readLine
+import scala.util.Try
+import de.htwg.se.backgammon.controller.Controller
 import de.htwg.se.backgammon.model.MoveException
 import de.htwg.se.backgammon.model.Move
 import de.htwg.se.backgammon.util.Event
 import de.htwg.se.backgammon.util.Observer
-import de.htwg.se.backgammon.controller.Controller
-import scala.util.Try
 import de.htwg.se.backgammon.util.PrettyPrint.MarkDifferencesBetweenGames
 import de.htwg.se.backgammon.util.PrettyPrint.PrintDiceResults
 import de.htwg.se.backgammon.util.PrettyPrint.PrintBold
 import de.htwg.se.backgammon.util.PrettyPrint.printNew
+import de.htwg.se.backgammon.util.PrettyPrint.printGameWithIndizies
 
 class TUI(controller: Controller) extends Observer:
   controller.add(this)
@@ -25,17 +25,24 @@ class TUI(controller: Controller) extends Observer:
       case Event.Move =>
         printNew(controller.game markDifferencesTo controller.previousGame)
       case Event.InvalidMove =>
-        println(s"Not possible! ${ex.getOrElse(MoveException()).getMessage()}")
+        printErr(s"Not possible! ${ex.getOrElse(MoveException()).getMessage()}")
       case Event.PlayerChanged =>
         println(s"${s"${controller.currentPlayer}".bold} it's your move!")
       case Event.DiceRolled =>
         println(
           s"You rolled the dice twice: ${controller.dice.toPrettyString}"
         )
+      case Event.BarIsNotEmpty =>
+        printErr(
+          s"You have at least one checker in your bar, which die do you wanna use?"
+        )
 
   def inputLoop(): Unit =
     analyseInput(readLine) match
-      case None             => println("Invalid input! Use: <from> <to>")
+      case None =>
+        printErr(
+          s"Use: <field with ${controller.currentPlayer.toLowerCase} checkers>"
+        )
       case Some(move: Move) => controller.doAndPublish(controller.put, move)
 
     if continue then inputLoop()
@@ -43,11 +50,23 @@ class TUI(controller: Controller) extends Observer:
   def analyseInput(input: String): Option[Move] =
     input match
       case "q" => controller.quit; None
-      case _ => {
+      case string => {
         Try({
-          val positions = input.split(" ")
-          val from = Integer.parseInt(positions(0))
-          val to = Integer.parseInt(positions(1))
-          Some(Move(from, to))
+          val input = Integer.parseInt(string)
+          if (controller.barIsNotEmpty) then
+            Some(Move(player = controller.currentPlayer, steps = input))
+          else Some(Move(input, controller.die))
         }).getOrElse(None)
       }
+
+  def printErr(error: String) =
+    printGameWithIndizies(controller.game); println(error)
+
+  def readLine: String =
+    printInputFormat; scala.io.StdIn.readLine
+
+  def printInputFormat = {
+    if controller.barIsNotEmpty then
+      print(s"Dice (${controller.dice(0)}|${controller.dice(1)}): ")
+    else print(s"${controller.die} steps: ")
+  }

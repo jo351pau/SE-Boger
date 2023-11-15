@@ -15,9 +15,42 @@ class Game(
 
   def this(setup: Setup) = this(Game.create(setup))
 
-  def move(from: Int, to: Int, pieces: Int = 1): Try[Game] = {
+  def move(player: Player, steps: Int): Try[Game] = {
+    val to =
+      if (player == Player.White) steps - 1
+      else fields.length - steps
+    Try({
+      if (player != fields(to).occupier && fields(to).occupier != Player.None) {
+        if (fields(to).number > 1) then
+          throw AttackNotPossibleException(-1, to, fields(to).number)
+        else {
+          attack(player, to)
+        }
+      } else {
+        val changes = Map(
+          to -> (fields(to) + 1)
+        )
+        player match {
+          case Player.White => copy(changes, barWhite = this.barWhite - 1)
+          case Player.Black => copy(changes, barBlack = this.barBlack - 1)
+          case Player.None  => this
+        }
+      }
+    })
+  }
+
+  def move(from: Int, steps: Int, pieces: Int = 1): Try[Game] = {
+    val to =
+      if (fields(from).occupier == Player.White) from + steps
+      else from - steps
     Try({
       if fields(from).isEmpty() then throw EmptyFieldException(from)
+
+      if (to >= fields.length || to < 0) then
+        throw FieldDoesNotExistException(from, steps, to)
+
+      if (from >= fields.length || from < 0) then
+        throw FieldDoesNotExistException(from, steps, from)
 
       if (!(fields(from) hasSameOccupier fields(to))) {
         if (fields(to).number > 1) then
@@ -38,11 +71,15 @@ class Game(
     })
   }
 
-  private def attack(from: Int, to: Int): Game = {
-    val changes = Map(
-      from -> (fields(from) - 1),
-      to -> Field(fields(from).occupier)
-    )
+  private def attack(from: Int | Player, to: Int): Game = {
+    val changes = from match {
+      case from: Int =>
+        Map(
+          (from -> (fields(from) - 1)),
+          (to -> Field(fields(from).occupier))
+        )
+      case player: Player => Map(to -> Field(player))
+    }
     fields(to).occupier.match {
       case Player.White => copy(changes, barWhite = this.barWhite + 1)
       case Player.Black => copy(changes, barBlack = this.barBlack + 1)

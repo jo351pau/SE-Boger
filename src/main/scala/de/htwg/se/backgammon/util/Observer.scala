@@ -1,7 +1,7 @@
 package de.htwg.se.backgammon.util
 
 trait Observer:
-  def update(e: Event, exception: Option[Throwable]) : Unit
+  def update(e: Event, exception: Option[Throwable]): Unit
 
 trait Observable:
   var subscribers: Vector[Observer] = Vector()
@@ -13,6 +13,7 @@ trait Observable:
 enum Event:
   case Quit
   case Move
+  case BarIsNotEmpty
   case InvalidMove
   case PlayerChanged
   case DiceRolled
