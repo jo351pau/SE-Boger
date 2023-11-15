@@ -5,8 +5,8 @@ import de.htwg.se.backgammon.controller.Controller
 import de.htwg.se.backgammon.view.TUI
 import de.htwg.se.backgammon.model.Model
 
-val NUMBER_OF_FIELDS = 24
-val NUMBER_OF_FIGURES = 15
+private val NUMBER_OF_FIELDS = 24
+private val NUMBER_OF_FIGURES = 15
 
 @main def run(): Unit = {
   val game = new Game(NUMBER_OF_FIELDS, NUMBER_OF_FIGURES)
