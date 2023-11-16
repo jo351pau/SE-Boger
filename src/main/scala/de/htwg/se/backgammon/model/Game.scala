@@ -28,7 +28,9 @@ class Game(
         }
       } else {
         val changes = Map(
-          to -> (fields(to) + 1)
+          to -> (if (fields(to).isEmpty())
+                   Field(player)
+                 else (fields(to) + 1))
         )
         player match {
           case Player.White => copy(changes, barWhite = this.barWhite - 1)

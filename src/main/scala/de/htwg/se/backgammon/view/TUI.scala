@@ -72,5 +72,5 @@ class TUI(controller: Controller) extends Observer:
   def printInputFormat = {
     if controller.barIsNotEmpty then
       print(s"Dice (${controller.dice(0)}|${controller.dice(1)}): ")
-    else print(s"${controller.die} steps: ")
+    else print(s"${s"${controller.die}".bold} step/s: ")
   }
