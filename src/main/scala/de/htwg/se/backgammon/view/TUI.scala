@@ -39,10 +39,10 @@ class TUI(controller: Controller) extends Observer:
 
   def inputLoop(): Unit =
     analyseInput(readLine) match
+      case None if controller.barIsNotEmpty =>
+        printErr(s"Use: <steps from ${playerColor.bold} bar>")
       case None =>
-        printErr(
-          s"Use: <field with ${controller.currentPlayer.toLowerCase} checkers>"
-        )
+        printErr(s"Use: <field with ${playerColor.bold} checkers>")
       case Some(move: Move) => controller.doAndPublish(controller.put, move)
 
     if continue then inputLoop()
@@ -53,11 +53,15 @@ class TUI(controller: Controller) extends Observer:
       case string => {
         Try({
           val input = Integer.parseInt(string)
-          if (controller.barIsNotEmpty) then
-            Some(Move(player = controller.currentPlayer, steps = input))
-          else Some(Move(input, controller.die))
+          Some(
+            if (controller.barIsNotEmpty) then
+              Move(player = controller.currentPlayer, steps = input)
+            else Move(input, controller.die)
+          )
         }).getOrElse(None)
       }
+
+  def playerColor = (controller.currentPlayer.toLowerCase)
 
   def printErr(error: String) =
     printGameWithIndizies(controller.game); println(error)

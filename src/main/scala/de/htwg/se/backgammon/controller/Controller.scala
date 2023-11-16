@@ -78,19 +78,23 @@ case class Controller(private val model: Model) extends Observable {
     model.dice.patch(model.dice.indexOf(dice), Nil, 1)
 
   private def checkMove(move: Move): Boolean = {
-    if (move.outOfBar) return true
-
-    if move.from >= game.fields.length || move.from < 0 then
-      FieldDoesNotExistException(move.from, move.steps, move.from)
-    else if (game.get(move.from).occupier != currentPlayer) then
-      NotYourFieldException(
-        move.from,
-        game.get(move.from).occupier,
-        currentPlayer
-      )
-    else if (!dice.contains(move.steps)) then
-      DieNotExistException(move.steps, dice)
-    else None
+    if (move.outOfBar) {
+      if (!dice.contains(move.steps)) then
+        DieNotExistException(move.steps, dice)
+      else None
+    } else {
+      if move.from >= game.fields.length || move.from < 0 then
+        FieldDoesNotExistException(move.from, move.steps, move.from)
+      else if (game.get(move.from).occupier != currentPlayer) then
+        NotYourFieldException(
+          move.from,
+          game.get(move.from).occupier,
+          currentPlayer
+        )
+      else if (!dice.contains(move.steps)) then
+        DieNotExistException(move.steps, dice)
+      else None
+    }
   } match {
     case ex: Exception => notifyObservers(Event.InvalidMove, Some(ex)); false
     case _             => true
