@@ -1,3 +1,5 @@
+package de.htwg.se.backgammon.model
+
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers._
 
@@ -23,6 +25,16 @@ class FieldSpec extends AnyWordSpec {
     }
     "look like |/| when number of pieces is 0" in {
       Field().toString shouldBe "|/|"
+    }
+    "with player white" in {
+      Field(Player.White).pieces shouldBe 1
+    }
+    "with player black" in {
+      Field(Player.Black).pieces shouldBe -1
+    }
+    "with player none" in {
+      Field(Player.None).pieces shouldBe 0
+      Field(Player.None).isOccupied() shouldBe false
     }
   }
 }
