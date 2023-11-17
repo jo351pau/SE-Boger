@@ -32,8 +32,9 @@ class FieldSpec extends AnyWordSpec {
     "with player black" in {
       Field(Player.Black).pieces shouldBe -1
     }
-    "with player black" in {
+    "with player none" in {
       Field(Player.None).pieces shouldBe 0
+      Field(Player.None).isOccupied() shouldBe false
     }
   }
 }

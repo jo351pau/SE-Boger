@@ -6,15 +6,23 @@ import org.scalatest.matchers.should.Matchers._
 class ModelSpec extends AnyWordSpec {
   "Model" should {
     "that it's the next player's turn" in {
-      model.next shouldBe Player.Black
+      var t = model
+      t.next shouldBe Player.Black
+      t.next shouldBe Player.White
     }
-    "that it's the next player's turn" in {
+    "that it always stores the previous game" in {
       val t = model;
       val game2 = new Game(24, 15)
       t.game = game2
       val game3 = new Game(24, 15)
       t.game = game3
       t.previousGame shouldBe game2
+    }
+    "White player starts by default" in {
+      val game = Game(24, 15)
+      val m = Model(game)
+      m.player shouldBe Player.White
+      m.game shouldBe game
     }
   }
   private def model = Model(new Game(24, 15), Player.White)
