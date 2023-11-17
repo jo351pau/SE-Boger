@@ -22,6 +22,7 @@ class ModelSpec extends AnyWordSpec {
       val game = Game(24, 15)
       val m = Model(game)
       m.player shouldBe Player.White
+      m.player.toLowerCase shouldBe "white"
       m.game shouldBe game
     }
   }
