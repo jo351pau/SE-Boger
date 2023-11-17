@@ -61,10 +61,13 @@ class GameSpec extends AnyWordSpec {
       )
       game.barBlack shouldBe 1
 
-      game = game.move(Player.Black, 1).get
+      game = game.move(Player.Black, 7).get
       game.fields should equal(
-        List(4, 1, 0, -1, 2, 0, 0, -6).map(i => Field(i))
+        List(4, -1, 0, -1, 2, 0, 0, -5).map(i => Field(i))
       )
+      game.barWhite shouldBe 1
+      game != Game(16, 24) shouldBe true
+      game == game shouldBe true
 
       game.move(2, 1).failed.get.getMessage() shouldBe EmptyFieldException(2)
         .getMessage()
