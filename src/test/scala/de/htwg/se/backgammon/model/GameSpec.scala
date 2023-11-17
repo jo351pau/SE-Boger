@@ -6,8 +6,8 @@ import org.scalatest.matchers.should.Matchers._
 class GameSpec extends AnyWordSpec {
   "Game" should {
     "return value between between 1 and 6" in {
-      Game.rollDice() should be > 0
-      Game.rollDice() should be < 7
+      Dice.roll should be > 0
+      Dice.roll should be < 7
     }
     "have default layout '|5| |/| |/| |/| |-3| |/| |-5| |/| |/| |/| |/| |2| " +
       "|-2| |/| |/| |/| |/| |5| |/| |3| |/| |/| |/| |-5|' " in {
