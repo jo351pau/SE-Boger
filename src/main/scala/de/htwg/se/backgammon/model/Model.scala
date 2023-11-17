@@ -8,7 +8,7 @@ class Model(private var _game: Game, var player: Player) {
   def next = {
     if player == Player.White then player = Player.Black
     else player = Player.White
-    movesThisRound = Nil
+    movesThisRound = Nil; player
   }
 
   var dice = Dice.roll(MOVES_PER_ROUND)
