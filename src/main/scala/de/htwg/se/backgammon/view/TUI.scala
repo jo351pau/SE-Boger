@@ -40,9 +40,9 @@ class TUI(controller: Controller) extends Observer:
   def inputLoop(): Unit =
     analyseInput(readLine) match
       case None if controller.barIsNotEmpty =>
-        printErr(s"Use: <steps from ${playerColor.bold} bar>")
+        printErr(s"Use: <steps from ${color.bold} bar>")
       case None =>
-        printErr(s"Use: <field with ${playerColor.bold} checkers>")
+        printErr(s"Use: <field with ${color.bold} checkers>")
       case Some(move: Move) => controller.doAndPublish(controller.put, move)
 
     if continue then inputLoop()
@@ -61,7 +61,7 @@ class TUI(controller: Controller) extends Observer:
         }).getOrElse(None)
       }
 
-  def playerColor = (controller.currentPlayer.toLowerCase)
+  def color = (controller.currentPlayer.toLowerCase)
 
   def printErr(error: String) =
     printGameWithIndizies(controller.game); println(error)
@@ -71,6 +71,6 @@ class TUI(controller: Controller) extends Observer:
 
   def printInputFormat = {
     if controller.barIsNotEmpty then
-      print(s"Dice (${controller.dice(0)}|${controller.dice(1)}): ")
+      print(s"Dice (${controller.dice.mkString("|")}): ")
     else print(s"${s"${controller.die}".bold} step/s: ")
   }

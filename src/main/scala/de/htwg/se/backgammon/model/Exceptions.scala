@@ -3,7 +3,7 @@ package de.htwg.se.backgammon.model
 class MoveException extends Exception {}
 
 case class EmptyFieldException(val position: Int) extends MoveException {
-  override def getMessage() = s"Field $position is empty!"
+  override def getMessage() = s"Field [$position] is empty!"
 }
 
 case class AttackNotPossibleException(
@@ -12,7 +12,7 @@ case class AttackNotPossibleException(
     val pieces: Int
 ) extends MoveException {
   override def getMessage() =
-    s"Different players on fields $from and $to {$pieces pieces on field}."
+    s"Different players on fields [$from] and [$to] {$pieces pieces on field}, can't attack."
 }
 
 case class NotYourFieldException(
@@ -21,7 +21,7 @@ case class NotYourFieldException(
     val currentPlayer: Player
 ) extends MoveException {
   override def getMessage() =
-    s"You are $currentPlayer, but $playerFrom is on field $from."
+    s"You are $currentPlayer, but $playerFrom is on field [$from]."
 }
 
 case class WrongDirectionException(val player: Player) extends MoveException {
@@ -43,5 +43,5 @@ case class FieldDoesNotExistException(
     val notExistingPosition: Int
 ) extends MoveException {
   override def getMessage() =
-    s"You can't move $steps steps from $position, because field $notExistingPosition doesn't exist."
+    s"You can't move $steps steps from [$position], because field [$notExistingPosition] doesn't exist."
 }
