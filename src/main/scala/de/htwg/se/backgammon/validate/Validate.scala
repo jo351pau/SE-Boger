@@ -1,18 +1,14 @@
 package de.htwg.se.backgammon.validate
 
 import scala.util.Try
+import scala.util.Success
+import scala.util.Failure
 
 trait ValidateStrategy {
-  private var ex: List[Exception] = List()
-
-  def execute(): Option[Exception] = if (ex.isEmpty) then None else Some(ex(0))
-
-  def require(
-      requirement: Boolean,
-      exception: Exception = Exception()
-  ): Unit = {
-    if (!requirement) then ex :+ Some(exception)
+  def execute(): Option[Throwable] = Try(validate()) match {
+    case Success(_)         => None
+    case Failure(exception) => Some(exception)
   }
 
-  def exceptions = ex
+  def validate(): Unit
 }

@@ -6,7 +6,6 @@ import de.htwg.se.backgammon.util.Manager
 import de.htwg.se.backgammon.model.Model
 import de.htwg.se.backgammon.model.Move
 import de.htwg.se.backgammon.model.Player
-import de.htwg.se.backgammon.model.Game
 import de.htwg.se.backgammon.model.NotYourFieldException
 import de.htwg.se.backgammon.model.WrongDirectionException
 import scala.util.Try
@@ -17,6 +16,7 @@ import de.htwg.se.backgammon.model.DieNotExistException
 import de.htwg.se.backgammon.model.FieldDoesNotExistException
 import de.htwg.se.backgammon.model.MOVES_PER_ROUND
 import de.htwg.se.backgammon.validate.ValidateMoveStrategy
+import de.htwg.se.backgammon.model.Game
 
 case class Controller(private val model: Model) extends Observable {
   def game = model.game

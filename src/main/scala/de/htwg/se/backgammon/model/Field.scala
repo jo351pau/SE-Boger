@@ -20,18 +20,20 @@ class Field(val pieces: Int) {
   override def toString: String =
     if (pieces != 0) s"|$pieces|" else "|/|"
 
-  def +(that: Int): Field = withPieces(number + that)
+  def +(that: Int): Field = copy(number + that)
 
-  def -(that: Int): Field = withPieces(number - that)
+  def -(that: Int): Field = copy(number - that)
 
   def isOccupied() = pieces != 0
 
   def isEmpty() = pieces == 0
 
-  def hasSameOccupier(that: Field) =
-    occupier == Player.None || that.occupier == Player.None || occupier == that.occupier
+  def hasSameOccupier(that: Field) = hasOccupier(that.occupier)
 
-  def withPieces(number: Int): Field =
+  def hasOccupier(player: Player) =
+    occupier == Player.None || player == Player.None || occupier == player
+
+  def copy(number: Int): Field =
     if (pieces < 0) Field(-number) else Field(number)
 
   val number = pieces.abs

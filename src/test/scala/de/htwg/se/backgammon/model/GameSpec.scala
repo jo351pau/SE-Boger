@@ -2,6 +2,7 @@ package de.htwg.se.backgammon.model
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers._
+import game.Game
 
 class GameSpec extends AnyWordSpec {
   "Game" should {
@@ -17,7 +18,7 @@ class GameSpec extends AnyWordSpec {
         )
       }
     "have default layout" in {
-      Game.create(DefaultSetup(24, 15)) should equal(
+      game.Game.create(DefaultSetup(24, 15)) should equal(
         List(5, 0, 0, 0, -3, 0, -5, 0, 0, 0, 0, 2, -2, 0, 0, 0, 0, 5, 0, 3, 0,
           0, 0, -5).map(i => Field(i))
       )

@@ -13,26 +13,30 @@ import de.htwg.se.backgammon.controller.Controller
 import scala.util.Try
 
 class ValidateMove(game: Game, move: Move, player: Player, dice: List[Int])
-    extends ValidateMoveStrategy(move, dice) {
+    extends ValidateMoveStrategy(game, move, dice) {
   val field = Try(game.get(move.from)).getOrElse(Field(Player.None))
-  val occupier = field.occupier
-  val from = move.from
-  val steps = move.steps
 
-  require(
-    (from <= game.fields.length || from > 0),
-    FieldDoesNotExistException(from, steps, from)
-  )
-
-  require((occupier == player), NotYourFieldException(from, occupier, player))
+  override def validate() = {
+    super.validate()
+    require(
+      (field.occupier == player),
+      NotYourFieldException(move.from, field.occupier, player)
+    )
+  }
 }
 
-class ValidateBearOffMove(move: Move, dice: List[Int])
-    extends ValidateMoveStrategy(move, dice)
+class ValidateBearOffMove(game: Game, move: Move, dice: List[Int])
+    extends ValidateMoveStrategy(game, move, dice)
 
-trait ValidateMoveStrategy(val move: Move, val dice: List[Int])
+trait ValidateMoveStrategy(val game: Game, val move: Move, val dice: List[Int])
     extends ValidateStrategy {
-  require(dice.contains(move.steps), DieNotExistException(move.steps, dice))
+  override def validate() = {
+    require(
+      (move.from < game.fields.length && move.from >= 0),
+      FieldDoesNotExistException(move.from, move.steps, move.from)
+    )
+    require(dice.contains(move.steps), DieNotExistException(move.steps, dice))
+  }
 }
 
 object ValidateMoveStrategy {
@@ -43,7 +47,7 @@ object ValidateMoveStrategy {
       dice: List[Int]
   ): ValidateMoveStrategy = move match {
     case _: BearOffMove =>
-      ValidateBearOffMove(move, dice)
+      ValidateBearOffMove(game, move, dice)
     case _ => ValidateMove(game, move, player, dice)
   }
 
