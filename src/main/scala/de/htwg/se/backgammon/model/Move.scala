@@ -1,5 +1,4 @@
 package de.htwg.se.backgammon.model
-import strategy.game.Game
 
 private val BAR_POSITION = 999
 
