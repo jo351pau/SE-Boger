@@ -2,7 +2,6 @@ package de.htwg.se.backgammon.model
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers._
-import game.Game
 
 class GameSpec extends AnyWordSpec {
   "Game" should {
@@ -18,7 +17,7 @@ class GameSpec extends AnyWordSpec {
         )
       }
     "have default layout" in {
-      game.Game.create(DefaultSetup(24, 15)) should equal(
+      Game.create(DefaultSetup(24, 15)) should equal(
         List(5, 0, 0, 0, -3, 0, -5, 0, 0, 0, 0, 2, -2, 0, 0, 0, 0, 5, 0, 3, 0,
           0, 0, -5).map(i => Field(i))
       )
@@ -38,31 +37,31 @@ class GameSpec extends AnyWordSpec {
       ).toString shouldBe "0 : |5| |/| |/| |-2| |2| |/| |/| |-5| : 0"
     }
     "be |3|, |-3|, |/|, |-5|, |2|, |2|, |-2|, |/|, |5|, |/|, |3|, |-5| when moved a piece from 0 to 4" in {
-      Game(12, 15).move(0, 4).get.fields should equal(
+      Game(12, 15).move(Move(0, 4)).get.fields should equal(
         List(4, -3, 0, -5, 1, 2, -2, 0, 5, 0, 3, -5).map(i => Field(i))
       )
     }
     "attacking opponent, send checker to bar and back" in {
       var game = Game(CustomSetup(List(5, 0, 0, -2)))
-      game = game.move(0, 1).get.move(3, 2).get
+      game = game.move(Move(0, 1)).get.move(Move(3, 2)).get
       game.fields should equal(
         List(4, -1, 0, -1, 2, 0, 0, -5).map(i => Field(i))
       )
       game.barWhite shouldBe 1
 
-      game = game.move(Player.White, 1).get
+      game = game.move(BearOffMove(Player.White, 1)).get
       game.fields should equal(
         List(5, -1, 0, -1, 2, 0, 0, -5).map(i => Field(i))
       )
       game.barWhite shouldBe 0
 
-      game = game.move(0, 1).get
+      game = game.move(Move(0, 1)).get
       game.fields should equal(
         List(4, 1, 0, -1, 2, 0, 0, -5).map(i => Field(i))
       )
       game.barBlack shouldBe 1
 
-      game = game.move(Player.Black, 7).get
+      game = game.move(BearOffMove(Player.Black, 7)).get
       game.fields should equal(
         List(4, -1, 0, -1, 2, 0, 0, -5).map(i => Field(i))
       )
@@ -70,15 +69,15 @@ class GameSpec extends AnyWordSpec {
       game != Game(16, 24) shouldBe true
       game == game shouldBe true
 
-      game.move(2, 1).failed.get.getMessage() shouldBe EmptyFieldException(2)
+      game.move(Move(2, 1)).failed.get.getMessage() shouldBe EmptyFieldException(2)
         .getMessage()
       game
-        .move(3, 3)
+        .move(Move(3, 3))
         .failed
         .get
         .getMessage() shouldBe AttackNotPossibleException(3, 0, 4).getMessage()
       game
-        .move(3, 15)
+        .move(Move(3, 15))
         .failed
         .get
         .getMessage() shouldBe FieldDoesNotExistException(3, 15, 3 - 15)

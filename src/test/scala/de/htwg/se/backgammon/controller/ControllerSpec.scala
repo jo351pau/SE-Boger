@@ -3,7 +3,7 @@ package de.htwg.se.backgammon.controller
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers._
 import de.htwg.se.backgammon.model.Model
-import de.htwg.se.backgammon.model.game.Game
+import de.htwg.se.backgammon.model.Game
 import de.htwg.se.backgammon.model.Move
 import de.htwg.se.backgammon.model.CustomSetup
 import de.htwg.se.backgammon.model.Field

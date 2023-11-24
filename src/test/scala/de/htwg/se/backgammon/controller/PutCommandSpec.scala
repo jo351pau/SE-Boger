@@ -2,12 +2,13 @@ package de.htwg.se.backgammon.controller
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers._
 import de.htwg.se.backgammon.model.Model
-import de.htwg.se.backgammon.model.game.Game
+import de.htwg.se.backgammon.model.Game
 import de.htwg.se.backgammon.util.Event
 import de.htwg.se.backgammon.model.Move
 import de.htwg.se.backgammon.model.CustomSetup
 import de.htwg.se.backgammon.model.Field
 import de.htwg.se.backgammon.model.Player
+import de.htwg.se.backgammon.model.BearOffMove
 
 class PutCommandSpec extends AnyWordSpec {
   "PutCommand" should {
@@ -22,7 +23,7 @@ class PutCommandSpec extends AnyWordSpec {
         List(4, 1, 0, -2, 2, 0, 0, -5).map(i => Field(i))
       )
       game = PutCommand(Move(3, 2)).doStep(game).get
-      game = PutCommand(Move(player = Player.White, steps = 1)).doStep(game).get
+      game = PutCommand(BearOffMove(Player.White, steps = 1)).doStep(game).get
       game.fields should equal(
         List(5, -1, 0, -1, 2, 0, 0, -5).map(i => Field(i))
       )
