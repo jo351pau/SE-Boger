@@ -1,4 +1,5 @@
 package de.htwg.se.backgammon.model
+import strategy.game.Game
 
 val MOVES_PER_ROUND = 2
 

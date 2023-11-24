@@ -2,7 +2,7 @@ package de.htwg.se.backgammon.view
 
 import scala.util.Try
 import de.htwg.se.backgammon.controller.Controller
-import de.htwg.se.backgammon.model.MoveException
+import de.htwg.se.backgammon.exception.MoveException
 import de.htwg.se.backgammon.model.Move
 import de.htwg.se.backgammon.model.BearOffMove
 import de.htwg.se.backgammon.util.Event

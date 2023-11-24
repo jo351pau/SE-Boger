@@ -2,6 +2,8 @@ package de.htwg.se.backgammon.model
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers._
+import strategy.game.Game
+import de.htwg.se.backgammon.exception.{NotYourFieldException, EmptyFieldException, AttackNotPossibleException, FieldDoesNotExistException, DieNotExistException, WrongDirectionException}
 
 class GameSpec extends AnyWordSpec {
   "Game" should {

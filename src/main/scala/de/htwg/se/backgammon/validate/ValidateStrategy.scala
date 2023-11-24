@@ -5,10 +5,10 @@ import scala.util.Success
 import scala.util.Failure
 
 trait ValidateStrategy {
-  def execute(): Option[Throwable] = Try(validate()) match {
-    case Success(_)         => None
-    case Failure(exception) => Some(exception)
-  }
+  def execute(): Try[Unit] = Try(validate())
+
+  def require(requirement: Boolean, exception: => Exception): Unit =
+    if (!requirement) throw exception
 
   def validate(): Unit
 }

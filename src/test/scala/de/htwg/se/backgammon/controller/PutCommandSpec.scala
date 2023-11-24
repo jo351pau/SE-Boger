@@ -9,6 +9,7 @@ import de.htwg.se.backgammon.model.CustomSetup
 import de.htwg.se.backgammon.model.Field
 import de.htwg.se.backgammon.model.Player
 import de.htwg.se.backgammon.model.BearOffMove
+import de.htwg.se.backgammon.model.strategy.game.Game
 
 class PutCommandSpec extends AnyWordSpec {
   "PutCommand" should {

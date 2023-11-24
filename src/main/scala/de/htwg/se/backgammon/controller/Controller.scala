@@ -6,17 +6,19 @@ import de.htwg.se.backgammon.util.Manager
 import de.htwg.se.backgammon.model.Model
 import de.htwg.se.backgammon.model.Move
 import de.htwg.se.backgammon.model.Player
-import de.htwg.se.backgammon.model.NotYourFieldException
-import de.htwg.se.backgammon.model.WrongDirectionException
+import de.htwg.se.backgammon.model.Dice
+import de.htwg.se.backgammon.exception.NotYourFieldException
+import de.htwg.se.backgammon.exception.WrongDirectionException
+import de.htwg.se.backgammon.exception.DieNotExistException
+import de.htwg.se.backgammon.exception.FieldDoesNotExistException
+import de.htwg.se.backgammon.model.MOVES_PER_ROUND
+import de.htwg.se.backgammon.model.Game
+
 import scala.util.Try
 import scala.util.Failure
 import scala.util.Success
-import de.htwg.se.backgammon.model.Dice
-import de.htwg.se.backgammon.model.DieNotExistException
-import de.htwg.se.backgammon.model.FieldDoesNotExistException
-import de.htwg.se.backgammon.model.MOVES_PER_ROUND
-import de.htwg.se.backgammon.validate.ValidateMoveStrategy
-import de.htwg.se.backgammon.model.Game
+
+import strategy.ValidateMoveStrategy
 
 case class Controller(private val model: Model) extends Observable {
   def game = model.game
@@ -80,7 +82,7 @@ case class Controller(private val model: Model) extends Observable {
 
   private def checkMove(move: Move): Boolean =
     ValidateMoveStrategy(this, move).execute() match {
-      case Some(ex: Exception) =>
+      case Failure(ex: Exception) =>
         notifyObservers(Event.InvalidMove, Some(ex)); false
       case _ => true
     }

@@ -1,6 +1,11 @@
-package de.htwg.se.backgammon.model
+package de.htwg.se.backgammon.model.strategy
 
 import de.htwg.se.backgammon.validate.ValidateStrategy
+import de.htwg.se.backgammon.model.Game
+import de.htwg.se.backgammon.model.Player
+import de.htwg.se.backgammon.exception.FieldDoesNotExistException
+import de.htwg.se.backgammon.exception.AttackNotPossibleException
+import de.htwg.se.backgammon.exception.EmptyFieldException
 
 class ValidateBearOffMoveStrategy(
     val game: Game,
@@ -38,7 +43,7 @@ class DefaultValidateMoveStrategy(
     require(game(from).isOccupied(), EmptyFieldException(from))
 
     require(
-      (game(from) hasSameOccupier game(to)) || game(to).number <= 1,
+      (game(from) hasSameOccupierAs game(to)) || game(to).number <= 1,
       AttackNotPossibleException(from, to, game(to).number)
     )
   }

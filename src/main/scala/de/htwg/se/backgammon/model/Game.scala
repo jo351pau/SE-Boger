@@ -1,15 +1,15 @@
 package de.htwg.se.backgammon.model
 
+import strategy.MoveStrategy
+import strategy.ValidateBearOffMoveStrategy
+import strategy.DefaultValidateMoveStrategy
+
 import scala.util.Random
 import scala.util.Try
 import scala.util.Success
 import java.util.Map.Entry
 import scala.util.Failure
-
-trait GameSeq(private val fields: List[Field]) extends IndexedSeq[Field] {
-  override def apply(i: Int): Field = fields(i)
-  override def length: Int = fields.length
-}
+import org.scalactic.Fail
 
 class Game(
     val fields: List[Field],
@@ -23,7 +23,7 @@ class Game(
   def this(setup: Setup) = this(Game.create(setup))
 
   def move(move: Move): Try[Game] = {
-    val to = whereToGo(move)
+    val to = move.whereToGo(this)
     val validateStrategy = move match {
       case move: BearOffMove =>
         ValidateBearOffMoveStrategy(this, move.player, to)
@@ -31,20 +31,9 @@ class Game(
         DefaultValidateMoveStrategy(this, move.from, to)
     }
     validateStrategy.execute() match {
-      case Some(value) => Failure(value)
-      case None        => Success(MoveStrategy(this, move, to).execute())
+      case Failure(ex) => Failure(ex)
+      case _           => Success(MoveStrategy(this, move, to).execute())
     }
-  }
-
-  def whereToGo(move: Move) = move match {
-    case move: BearOffMove =>
-      if (move.player == Player.White)
-        move.steps - 1
-      else length - move.steps
-    case Move(from, steps) =>
-      if (fields(move.from).occupier == Player.White)
-        from + steps
-      else from - steps
   }
 
   def get(position: Int) = fields(position)
@@ -79,4 +68,9 @@ private object Game {
     )
     side ++ side.map(f => Field(-f.pieces)).reverse
   }
+}
+
+trait GameSeq(private val fields: List[Field]) extends IndexedSeq[Field] {
+  override def apply(i: Int): Field = fields(i)
+  override def length: Int = fields.length
 }

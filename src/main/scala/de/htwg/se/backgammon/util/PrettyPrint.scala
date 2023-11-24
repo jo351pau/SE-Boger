@@ -2,11 +2,12 @@ package de.htwg.se.backgammon.util
 
 import de.htwg.se.backgammon.model.Player
 import de.htwg.se.backgammon.model.Game
+import de.htwg.se.backgammon.model.strategy.game.Game
 
 object PrettyPrint {
   private def clean = {
-    /*print("\u001b[2J")
-    print("\u001b[H")*/
+    print("\u001b[2J")
+    print("\u001b[H")
   }
 
   def printNew(string: String | Game) = {
