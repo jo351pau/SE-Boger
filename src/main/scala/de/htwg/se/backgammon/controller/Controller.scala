@@ -16,6 +16,7 @@ import de.htwg.se.backgammon.model.Dice
 import de.htwg.se.backgammon.model.DieNotExistException
 import de.htwg.se.backgammon.model.FieldDoesNotExistException
 import de.htwg.se.backgammon.model.MOVES_PER_ROUND
+import de.htwg.se.backgammon.validate.ValidateMoveStrategy
 
 case class Controller(private val model: Model) extends Observable {
   def game = model.game
@@ -77,26 +78,10 @@ case class Controller(private val model: Model) extends Observable {
   private def used(dice: Int) = model.dice =
     model.dice.patch(model.dice.indexOf(dice), Nil, 1)
 
-  private def checkMove(move: Move): Boolean = {
-    if (move.outOfBar) {
-      if (!dice.contains(move.steps)) then
-        DieNotExistException(move.steps, dice)
-      else None
-    } else {
-      if move.from >= game.fields.length || move.from < 0 then
-        FieldDoesNotExistException(move.from, move.steps, move.from)
-      else if (game.get(move.from).occupier != currentPlayer) then
-        NotYourFieldException(
-          move.from,
-          game.get(move.from).occupier,
-          currentPlayer
-        )
-      else if (!dice.contains(move.steps)) then
-        DieNotExistException(move.steps, dice)
-      else None
+  private def checkMove(move: Move): Boolean =
+    ValidateMoveStrategy(this, move).execute() match {
+      case Some(ex: Exception) =>
+        notifyObservers(Event.InvalidMove, Some(ex)); false
+      case _ => true
     }
-  } match {
-    case ex: Exception => notifyObservers(Event.InvalidMove, Some(ex)); false
-    case _             => true
-  }
 }
