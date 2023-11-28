@@ -10,12 +10,18 @@ object MoveStrategy {
   def apply(game: Game, move: Move, to: Int) = move match {
     case move: BearOffMove =>
       if game(to) hasNotOccupier move.player then
-        BearOffAttackStrategy(game, move.player, to)
-      else BearOffMoveStrategy(game, move.player, to)
+        new BearOffMoveStrategy(game, move.player, to)
+          with AttackMoveStrategy(game, move.player, to)
+      else
+        new BearOffMoveStrategy(game, move.player, to)
+          with PeacefulMoveStrategy(game, move.player, to)
     case Move(from, steps) =>
       if game(from) hasDifferentOccupierThen game(to) then
-        DefaultAttackStrategy(game, from, to)
-      else PeacefulMoveStrategy(game, from, to)
+        new DefaultMoveStrategy(game, from, to)
+          with AttackMoveStrategy(game, game(from).occupier, to)
+      else
+        new DefaultMoveStrategy(game, from, to)
+          with PeacefulMoveStrategy(game, game(from).occupier, to)
   }
 }
 
@@ -40,10 +46,10 @@ trait MoveStrategy(var game: Game) {
 
 abstract class MoveCheckersStrategy(game: Game) extends MoveStrategy(game) {
 
-  def execute(): Game =  placeCheckers; pickUpCheckers
+  def execute(): Game = placeCheckers; pickUpCheckers
 
   def placeCheckers: Game
-  
+
   def pickUpCheckers: Game
 
   trait Bar { def ++ : Game; def -- : Game }
