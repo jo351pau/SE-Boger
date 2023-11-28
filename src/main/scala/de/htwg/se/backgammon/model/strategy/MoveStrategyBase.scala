@@ -9,7 +9,7 @@ import de.htwg.se.backgammon.model.Player
 object MoveStrategy {
   def apply(game: Game, move: Move, to: Int) = move match {
     case move: BearOffMove =>
-      if game(to) hasNotOccupier move.player then
+      if game(to) isNotOccupiedBy move.player then
         new BearOffMoveStrategy(game, move.player, to)
           with AttackMoveStrategy(game, move.player, to)
       else

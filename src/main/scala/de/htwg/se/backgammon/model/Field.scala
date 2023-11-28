@@ -28,14 +28,14 @@ class Field(val pieces: Int) {
 
   def isEmpty() = pieces == 0
 
-  def hasSameOccupierAs(that: Field) = hasOccupier(that.occupier)
+  def hasSameOccupierAs(that: Field) = isOccupiedBy(that.occupier)
 
-  def hasDifferentOccupierThen(that: Field) = !(hasOccupier(that.occupier))
+  def hasDifferentOccupierThen(that: Field) = !(isOccupiedBy(that.occupier))
 
-  def hasOccupier(player: Player) : Boolean =
+  def isOccupiedBy(player: Player) : Boolean =
     occupier == Player.None || player == Player.None || occupier == player
 
-  def hasNotOccupier(player: Player) = !(hasOccupier(player))
+  def isNotOccupiedBy(player: Player) = !(isOccupiedBy(player))
 
   def copy(number: Int): Field =
     if (pieces < 0) Field(-number) else Field(number)
