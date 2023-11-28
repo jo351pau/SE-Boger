@@ -7,7 +7,7 @@ import de.htwg.se.backgammon.exception.FieldDoesNotExistException
 import de.htwg.se.backgammon.exception.AttackNotPossibleException
 import de.htwg.se.backgammon.exception.EmptyFieldException
 
-class ValidateBearOffMoveStrategy(
+class ValidateBearInMoveStrategy(
     val game: Game,
     val player: Player,
     val to: Int

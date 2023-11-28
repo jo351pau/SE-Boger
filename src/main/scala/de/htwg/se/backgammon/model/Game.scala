@@ -1,7 +1,7 @@
 package de.htwg.se.backgammon.model
 
 import strategy.MoveStrategy
-import strategy.ValidateBearOffMoveStrategy
+import strategy.ValidateBearInMoveStrategy
 import strategy.DefaultValidateMoveStrategy
 
 import scala.util.Random
@@ -22,8 +22,8 @@ case class Game(fields: List[Field], barWhite: Int = 0, barBlack: Int = 0)
   def move(move: Move): Try[Game] = {
     val to = move.whereToGo(this)
     val validateStrategy = move match {
-      case move: BearOffMove =>
-        ValidateBearOffMoveStrategy(this, move.player, to)
+      case move: BearInMove =>
+        ValidateBearInMoveStrategy(this, move.player, to)
       case Move(from, steps) =>
         DefaultValidateMoveStrategy(this, move.from, to)
     }

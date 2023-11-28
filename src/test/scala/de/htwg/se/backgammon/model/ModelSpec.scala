@@ -19,7 +19,7 @@ class ModelSpec extends AnyWordSpec {
       t.previousGame shouldBe game2
     }
     "White player starts by default" in {
-      val game = Game(24, 15)
+      val game = new Game(24, 15)
       val m = Model(game)
       m.player shouldBe Player.White
       m.player.toLowerCase shouldBe "white"

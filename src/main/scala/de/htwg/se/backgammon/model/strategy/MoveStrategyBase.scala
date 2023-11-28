@@ -2,18 +2,18 @@ package de.htwg.se.backgammon.model.strategy
 
 import de.htwg.se.backgammon.model.Game
 import de.htwg.se.backgammon.model.Move
-import de.htwg.se.backgammon.model.BearOffMove
+import de.htwg.se.backgammon.model.BearInMove
 import de.htwg.se.backgammon.model.Field
 import de.htwg.se.backgammon.model.Player
 
 object MoveStrategy {
   def apply(game: Game, move: Move, to: Int) = move match {
-    case move: BearOffMove =>
+    case move: BearInMove =>
       if game(to) isNotOccupiedBy move.player then
-        new BearOffMoveStrategy(game, move.player, to)
+        new BearInMoveStrategy(game, move.player, to)
           with AttackMoveStrategy(game, move.player, to)
       else
-        new BearOffMoveStrategy(game, move.player, to)
+        new BearInMoveStrategy(game, move.player, to)
           with PeacefulMoveStrategy(game, move.player, to)
     case Move(from, steps) =>
       if game(from) hasDifferentOccupierThen game(to) then

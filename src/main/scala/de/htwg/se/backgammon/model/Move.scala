@@ -9,7 +9,7 @@ case class Move(from: Int, steps: Int) {
   }
 }
 
-class BearOffMove(val player: Player, steps: Int)
+class BearInMove(val player: Player, steps: Int)
     extends Move(BAR_POSITION, steps) {
   override def whereToGo(game: Game) = player match {
     case Player.White => steps - 1

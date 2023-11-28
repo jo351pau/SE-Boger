@@ -4,7 +4,7 @@ import scala.util.Try
 import de.htwg.se.backgammon.controller.Controller
 import de.htwg.se.backgammon.exception.MoveException
 import de.htwg.se.backgammon.model.Move
-import de.htwg.se.backgammon.model.BearOffMove
+import de.htwg.se.backgammon.model.BearInMove
 import de.htwg.se.backgammon.util.Event
 import de.htwg.se.backgammon.util.Observer
 import de.htwg.se.backgammon.util.PrettyPrint.MarkDifferencesBetweenGames
@@ -56,7 +56,7 @@ class TUI(controller: Controller) extends Observer:
           val input = Integer.parseInt(string)
           Some(
             if (controller.barIsNotEmpty) then
-              BearOffMove(controller.currentPlayer, input)
+              BearInMove(controller.currentPlayer, input)
             else Move(input, controller.die)
           )
         }).getOrElse(None)

@@ -12,7 +12,7 @@ class GameSpec extends AnyWordSpec {
     }
     "have default layout '|5| |/| |/| |/| |-3| |/| |-5| |/| |/| |/| |/| |2| " +
       "|-2| |/| |/| |/| |/| |5| |/| |3| |/| |/| |/| |-5|' " in {
-        Game(24, 15).fields should equal(
+        new Game(24, 15).fields should equal(
           List(5, 0, 0, 0, -3, 0, -5, 0, 0, 0, 0, 2, -2, 0, 0, 0, 0, 5, 0, 3, 0,
             0, 0, -5).map(i => Field(i))
         )
@@ -24,26 +24,26 @@ class GameSpec extends AnyWordSpec {
       )
     }
     "have custom layout" in {
-      Game(CustomSetup(List(4, 0, 0, -2))).fields should equal(
+      new Game(CustomSetup(List(4, 0, 0, -2))).fields should equal(
         List(4, 0, 0, -2, 2, 0, 0, -4).map(i => Field(i))
       )
     }
     "return winner empty" in {
-      Game(24, 15).winner shouldBe Option.empty
+      new Game(24, 15).winner shouldBe Option.empty
     }
 
     "look like |5| |/| |/| |-2| |2| |/| |/| |-5|" in {
-      Game(
+      new Game(
         CustomSetup(List(5, 0, 0, -2))
       ).toString shouldBe "0 : |5| |/| |/| |-2| |2| |/| |/| |-5| : 0"
     }
     "be |3|, |-3|, |/|, |-5|, |2|, |2|, |-2|, |/|, |5|, |/|, |3|, |-5| when moved a piece from 0 to 4" in {
-      Game(12, 15).move(Move(0, 4)).get.fields should equal(
+      new Game(12, 15).move(Move(0, 4)).get.fields should equal(
         List(4, -3, 0, -5, 1, 2, -2, 0, 5, 0, 3, -5).map(i => Field(i))
       )
     }
     "attacking opponent, send checker to bar and back" in {
-      var game = Game(CustomSetup(List(5, 0, 0, -2)))
+      var game = new Game(CustomSetup(List(5, 0, 0, -2)))
       game = game.move(Move(0, 1)).get.move(Move(3, 2)).get
       game.fields should equal(
         List(4, -1, 0, -1, 2, 0, 0, -5).map(i => Field(i))
@@ -67,7 +67,7 @@ class GameSpec extends AnyWordSpec {
         List(4, -1, 0, -1, 2, 0, 0, -5).map(i => Field(i))
       )
       game.barWhite shouldBe 1
-      game != Game(16, 24) shouldBe true
+      game != new Game(16, 24) shouldBe true
       game == game shouldBe true
 
       game.move(Move(2, 1)).failed.get.getMessage() shouldBe EmptyFieldException(2)
