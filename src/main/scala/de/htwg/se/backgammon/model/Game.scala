@@ -11,11 +11,8 @@ import java.util.Map.Entry
 import scala.util.Failure
 import org.scalactic.Fail
 
-class Game(
-    val fields: List[Field],
-    val barWhite: Int = 0,
-    val barBlack: Int = 0
-) extends GameSeq(fields) {
+case class Game(fields: List[Field], barWhite: Int = 0, barBlack: Int = 0)
+    extends GameSeq(fields) {
 
   def this(fields: Int, pieces: Int) =
     this(Game.create(DefaultSetup(fields, pieces)))
