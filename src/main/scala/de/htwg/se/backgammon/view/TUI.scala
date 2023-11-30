@@ -16,7 +16,6 @@ import de.htwg.se.backgammon.model.Input
 import de.htwg.se.backgammon.model.Quit
 import de.htwg.se.backgammon.model.Undo
 import de.htwg.se.backgammon.model.Redo
-import de.htwg.se.backgammon.exception.UnknownException
 
 class TUI(controller: Controller) extends Observer:
   controller.add(this)
