@@ -2,16 +2,11 @@ package de.htwg.se.backgammon.util
 
 import scala.util.Try
 import scala.util.Success
-import de.htwg.se.backgammon.model.Move
 
 trait Command[T, M]:
   def noStep(t: T): T
   def doStep(t: T): Try[T]
   def undoStep(): M
-
-private enum Stack {
-  case Undo; case Redo
-}
 
 class Manager[T, M]:
   private var undoStack: List[Command[T, M]] = Nil

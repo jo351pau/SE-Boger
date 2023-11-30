@@ -38,11 +38,16 @@ class DefaultSetup(fields: Int, pieces: Int) extends Setup(fields, pieces) {
 
 class CustomSetup(fields: Int, pieces: Int) extends Setup(fields, pieces) {
 
-  var fieldsList: List[Int] = _
+  var fieldsList: Seq[Int] = _
 
   def this(list: List[Int]) = {
     this(list.length * 2, list.map(_.abs).sum)
     this.fieldsList = list
+  }
+
+  def this(fields: Int*) = {
+    this(fields.length * 2, fields.map(_.abs).sum)
+    this.fieldsList = fields
   }
 
   override def toMap: Map[Int, Int] = fieldsList.zipWithIndex.map {
