@@ -11,13 +11,15 @@ import de.htwg.se.backgammon.exception.NotYourFieldException
 import de.htwg.se.backgammon.exception.DieNotExistException
 import de.htwg.se.backgammon.validate.ValidateStrategy
 import de.htwg.se.backgammon.controller.Controller
-
 import scala.util.Try
+import de.htwg.se.backgammon.model.NoMove
+import de.htwg.se.backgammon.exception.NoMoveException
 
 trait ValidateMoveStrategy(val game: Game, val move: Move, val dice: List[Int])
     extends ValidateStrategy {
   override def validate() = {
     require(dice.contains(move.steps), DieNotExistException(move.steps, dice))
+    require(!move.isInstanceOf[NoMove], NoMoveException())
   }
 }
 

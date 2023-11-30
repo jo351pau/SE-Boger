@@ -19,26 +19,25 @@ import scala.util.Failure
 import scala.util.Success
 
 import strategy.ValidateMoveStrategy
+import de.htwg.se.backgammon.model.GameState
+import de.htwg.se.backgammon.model.NoMove
+import de.htwg.se.backgammon.exception.NoMoveException
 
 case class Controller(private val model: Model) extends Observable {
   def game = model.game
   def previousGame = model.previousGame
   def currentPlayer = model.player
   def dice = model.dice
-  def die: Int = dice(
-    if (model.movesThisRound.length <= model.dice.length - 1)
-      model.movesThisRound.length
-    else model.dice.length - 1
-  )
+  def die: Int = dice(0)
 
-  val manager = new Manager[Game]
+  val manager = new Manager[Game, GameState]
   def doAndPublish(doThis: Move => Try[Game], move: Move): Unit = {
     if checkMove(move) then
       doThis(move).match {
         case Success(game: Game) => {
           this used move.steps
           this.game = game
-          if (model.movesThisRound.length >= MOVES_PER_ROUND) {
+          if (model.dice.isEmpty) {
             nextTurn()
             roll()
           }
@@ -47,8 +46,34 @@ case class Controller(private val model: Model) extends Observable {
           notifyObservers(Event.InvalidMove, Some(exception))
       }
   }
+
+  def doAndPublish(doThis: Move => Try[Game]): Unit = {
+    manager.stackCommand match {
+      case Some(command: PutCommand) => doAndPublish(doThis, command.move)
+      case _ => notifyObservers(Event.InvalidMove, Some(NoMoveException()))
+    }
+  }
+
+  def undoAndPublish(doThis: => Option[GameState]): Unit = {
+    val (game, move) = doThis match {
+      case None                        => return
+      case Some(GameState(game, move)) => (game, move)
+    }
+    model.dice =
+      if (model.dice.length == MOVES_PER_ROUND)
+      then List(move.steps)
+      else model.dice.::(move.steps)
+
+    this.game = game
+
+    if (model.dice.length == 1) nextTurn()
+  }
+
   def put(move: Move): Try[Game] = manager.doStep(game, PutCommand(move))
+  def redo(move: Move): Try[Game] = manager.redoStep(game)
+  def undo: Option[GameState] = manager.undoStep()
   def quit: Unit = notifyObservers(Event.Quit)
+
   override def toString = game.toString
 
   private def game_=(game: Game) = {
@@ -63,11 +88,11 @@ case class Controller(private val model: Model) extends Observable {
   private def roll(): List[Int] = {
     model.dice = Dice.roll(MOVES_PER_ROUND)
     notifyObservers(Event.DiceRolled)
-    if barIsNotEmpty then notifyObservers(Event.BarIsNotEmpty)
+    if checkersInBar then notifyObservers(Event.BarIsNotEmpty)
     model.dice
   }
 
-  def barIsNotEmpty =
+  def checkersInBar =
     if (currentPlayer == Player.White) game.barWhite > 0 else game.barBlack > 0
 
   private def hasToBearOff =

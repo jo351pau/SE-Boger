@@ -2,7 +2,7 @@ package de.htwg.se.backgammon.model
 
 private val BAR_POSITION = 999
 
-case class Move(from: Int, steps: Int) {
+case class Move(from: Int, steps: Int) extends Input {
   def whereToGo(game: Game) = game(from).occupier match {
     case Player.White => from + steps
     case _            => from - steps
@@ -16,3 +16,5 @@ class BearInMove(val player: Player, steps: Int)
     case _            => game.length - steps
   }
 }
+
+class NoMove extends Move(0, 0)

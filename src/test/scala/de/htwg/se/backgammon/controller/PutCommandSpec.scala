@@ -8,7 +8,7 @@ import de.htwg.se.backgammon.model.Move
 import de.htwg.se.backgammon.model.CustomSetup
 import de.htwg.se.backgammon.model.Field
 import de.htwg.se.backgammon.model.Player
-import de.htwg.se.backgammon.model.BearOffMove
+import de.htwg.se.backgammon.model.BearInMove
 
 class PutCommandSpec extends AnyWordSpec {
   "PutCommand" should {
@@ -23,7 +23,7 @@ class PutCommandSpec extends AnyWordSpec {
         List(4, 1, 0, -2, 2, 0, 0, -5).map(i => Field(i))
       )
       game = PutCommand(Move(3, 2)).doStep(game).get
-      game = PutCommand(BearOffMove(Player.White, steps = 1)).doStep(game).get
+      game = PutCommand(BearInMove(Player.White, steps = 1)).doStep(game).get
       game.fields should equal(
         List(5, -1, 0, -1, 2, 0, 0, -5).map(i => Field(i))
       )

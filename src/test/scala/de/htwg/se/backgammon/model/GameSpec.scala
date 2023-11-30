@@ -50,7 +50,7 @@ class GameSpec extends AnyWordSpec {
       )
       game.barWhite shouldBe 1
 
-      game = game.move(BearOffMove(Player.White, 1)).get
+      game = game.move(BearInMove(Player.White, 1)).get
       game.fields should equal(
         List(5, -1, 0, -1, 2, 0, 0, -5).map(i => Field(i))
       )
@@ -62,7 +62,7 @@ class GameSpec extends AnyWordSpec {
       )
       game.barBlack shouldBe 1
 
-      game = game.move(BearOffMove(Player.Black, 7)).get
+      game = game.move(BearInMove(Player.Black, 7)).get
       game.fields should equal(
         List(4, -1, 0, -1, 2, 0, 0, -5).map(i => Field(i))
       )

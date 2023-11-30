@@ -2,7 +2,13 @@ package de.htwg.se.backgammon.exception
 
 import de.htwg.se.backgammon.model.Player
 
-class MoveException extends Exception
+class MoveException extends Exception {
+  override def getMessage() = "Unknown error has occurred."
+}
+
+case class NoMoveException() extends MoveException {
+  override def getMessage() = "There is no move to redo!"
+}
 
 case class EmptyFieldException(val position: Int) extends MoveException {
   override def getMessage() = s"Field $position is empty!"

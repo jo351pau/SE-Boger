@@ -67,6 +67,14 @@ private object Game {
   }
 }
 
+case class GameState(game: Game, move: Move) {
+  def isValid = !move.isInstanceOf[NoMove]
+}
+
+object GameState {
+  def invalid = GameState(Game(List()), NoMove())
+}
+
 trait GameSeq(private val fields: List[Field]) extends IndexedSeq[Field] {
   override def apply(i: Int): Field = fields(i)
   override def length: Int = fields.length
