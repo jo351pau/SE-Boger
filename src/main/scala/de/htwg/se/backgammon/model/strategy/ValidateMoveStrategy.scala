@@ -28,6 +28,27 @@ class ValidateBearInMoveStrategy(
   }
 }
 
+class ValidateBearOffMoveStrategy(
+    val game: Game,
+    val from: Int,
+    val to: Int
+) extends ValidateStrategy {
+
+  override def validate() = {
+    require(game(from).isOccupied(), EmptyFieldException(from))
+    require(
+      (to <= game.length && to >= -1),
+      FieldDoesNotExistException(from, (from.abs - to.abs).abs, to)
+    )
+    if (to != game.length && to != -1) {
+      require(
+        (game(from) hasSameOccupierAs game(to)) || game(to).number <= 1,
+        AttackNotPossibleException(from, to, game(to).number)
+      )
+    }
+  }
+}
+
 class DefaultValidateMoveStrategy(
     val game: Game,
     val from: Int,

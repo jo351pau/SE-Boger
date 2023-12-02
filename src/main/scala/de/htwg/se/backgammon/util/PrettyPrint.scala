@@ -30,6 +30,20 @@ object PrettyPrint {
     )
   }
 
+  def printGameOver(player: Player) = {
+    val victoryMessage =
+      """ _     _             _                                              
+      |( )   ( )           ( )                                             
+      |`\`\_/'/'_    _   _ |/  _   _    __      _   _   _    _     ___     
+      |  `\ /'/'_`\ ( ) ( )   ( ) ( ) /'__`\   ( ) ( ) ( ) /'_`\ /' _ `\   
+      |   | |( (_) )| (_) |   | \_/ |(  ___/   | \_/ \_/ |( (_) )| ( ) |   
+      |   (_)`\___/'`\___/'   `\___/'`\____)   `\___x___/'`\___/'(_) (_)   
+      |                                                                    
+      |""".stripMargin
+    clean
+    println(s"${victoryMessage}\nCongratulation to ${s"${player}".bold}!!")
+  }
+
   implicit class MarkDifferencesBetweenGames(original: Game) {
 
     def markDifferencesTo(modified: Game): String = {

@@ -10,6 +10,7 @@ import scala.util.Success
 import java.util.Map.Entry
 import scala.util.Failure
 import org.scalactic.Fail
+import de.htwg.se.backgammon.model.strategy.ValidateBearOffMoveStrategy
 
 case class Game(fields: List[Field], barWhite: Int = 0, barBlack: Int = 0)
     extends GameSeq(fields) {
@@ -24,8 +25,8 @@ case class Game(fields: List[Field], barWhite: Int = 0, barBlack: Int = 0)
     val validateStrategy = move match {
       case move: BearInMove =>
         ValidateBearInMoveStrategy(this, move.player, to)
-      case Move(from, steps) =>
-        DefaultValidateMoveStrategy(this, move.from, to)
+      case _: BearOffMove    => ValidateBearOffMoveStrategy(this, move.from, to)
+      case Move(from, steps) => DefaultValidateMoveStrategy(this, from, to)
     }
     validateStrategy.execute() match {
       case Failure(ex) => Failure(ex)
@@ -40,12 +41,15 @@ case class Game(fields: List[Field], barWhite: Int = 0, barBlack: Int = 0)
     else if !fields.exists(_.occupier == Player.Black) then Some(Player.Black)
     else Option.empty
 
-  def homeBoards = Map(
-    Player.White -> fields.dropRight(fields.length * (3 / 4)),
-    Player.Black -> fields.drop(fields.length * (3 / 4))
+  def homeBoard = Map(
+    Player.White -> fields.drop((fields.length / 4) * 3),
+    Player.Black -> fields.dropRight((fields.length / 4) * 3)
   )
 
-  val numberOfPieces: Int = fields.map(_.number).sum / 2
+  def numberOfPieces = Map(
+    Player.White -> fields.filter(_.occupier == Player.White).map(_.number).sum,
+    Player.Black -> fields.filter(_.occupier == Player.Black).map(_.number).sum
+  )
 
   override def toString: String =
     s"$barWhite : ${fields.mkString(" ")} : $barBlack"

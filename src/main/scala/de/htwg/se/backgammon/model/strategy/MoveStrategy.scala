@@ -12,9 +12,8 @@ abstract class DefaultMoveStrategy(game: Game, from: Int, to: Int)
     extends MoveCheckersStrategy(game) {
   override def pickUpCheckers: Game = set(from -> (game(from) - 1))
 }
-class BearOffMoveStrategy(game: Game, from: Int, to: Int)
-    extends MoveCheckersStrategy(game) {
-  override def pickUpCheckers: Game = set(from -> (game(from) - 1))
 
-  override def placeCheckers: Game = game
+class BearOffMoveStrategy(game: Game, from: Int, to: Int)
+    extends MoveStrategy(game) {
+  def execute(): Game = set(from -> (game(from) - 1))
 }

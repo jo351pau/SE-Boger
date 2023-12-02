@@ -5,23 +5,31 @@ import de.htwg.se.backgammon.model.Move
 import de.htwg.se.backgammon.model.BearInMove
 import de.htwg.se.backgammon.model.Field
 import de.htwg.se.backgammon.model.Player
+import de.htwg.se.backgammon.model.BearOffMove
 
 object MoveStrategy {
-  def apply(game: Game, move: Move, to: Int) = move match {
-    case move: BearInMove =>
+  def apply(game: Game, move: Move, to: Int): MoveStrategy = move match {
+    case move: BearInMove => {
       if game(to) isNotOccupiedBy move.player then
         new BearInMoveStrategy(game, move.player, to)
           with AttackMoveStrategy(game, move.player, to)
       else
         new BearInMoveStrategy(game, move.player, to)
           with PeacefulMoveStrategy(game, move.player, to)
-    case Move(from, steps) =>
+    }
+    case move: BearOffMove => {
+      if (move.movesToField(game)) then
+        apply(game, Move(move.from, move.steps), to)
+      else new BearOffMoveStrategy(game, move.from, to)
+    }
+    case Move(from, steps) => {
       if game(from) hasDifferentOccupierThen game(to) then
         new DefaultMoveStrategy(game, from, to)
           with AttackMoveStrategy(game, game(from).occupier, to)
       else
         new DefaultMoveStrategy(game, from, to)
           with PeacefulMoveStrategy(game, game(from).occupier, to)
+    }
   }
 }
 

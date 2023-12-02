@@ -17,3 +17,5 @@ enum Event:
   case InvalidMove
   case PlayerChanged
   case DiceRolled
+  case AllCheckersInTheHomeBoard
+  case GameOver
