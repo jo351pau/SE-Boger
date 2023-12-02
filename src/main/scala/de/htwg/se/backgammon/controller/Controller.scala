@@ -34,25 +34,17 @@ case class Controller(private val model: Model) extends Observable {
   def doAndPublish(doThis: Move => Try[Game], move: Move): Unit = {
     if checkMove(move) then
       doThis(move).match {
-        case Success(game: Game) => {
-          this used move.steps
-          this.game = game
-          if (model.dice.isEmpty) {
-            nextTurn()
-            roll()
-          }
-        }
+        case Success(game: Game) => handle(game, move.steps)
         case Failure(exception) =>
           notifyObservers(Event.InvalidMove, Some(exception))
       }
   }
 
-  def doAndPublish(doThis: Move => Try[Game]): Unit = {
+  def doAndPublish(doThis: Move => Try[Game]): Unit =
     manager.stackCommand match {
       case Some(command: PutCommand) => doAndPublish(doThis, command.move)
       case _ => notifyObservers(Event.InvalidMove, Some(NoMoveException()))
     }
-  }
 
   def undoAndPublish(doThis: => Option[GameState]): Unit = {
     val (game, move) = doThis match {
@@ -69,6 +61,19 @@ case class Controller(private val model: Model) extends Observable {
     if (model.dice.length == 1) nextTurn()
   }
 
+  def handle(game: Game, steps: Int) = {
+    this used steps
+    this.game = game
+    if (model.dice.isEmpty) {
+      nextTurn()
+      roll()
+    }
+    if (game.winner.isDefined) then notifyObservers(Event.GameOver)
+  }
+
+  def skip(steps: Int): Game = {
+    handle(game, steps); game
+  }
   def put(move: Move): Try[Game] = manager.doStep(game, PutCommand(move))
   def redo(move: Move): Try[Game] = manager.redoStep(game)
   def undo: Option[GameState] = manager.undoStep()
@@ -77,8 +82,7 @@ case class Controller(private val model: Model) extends Observable {
   override def toString = game.toString
 
   private def game_=(game: Game) = {
-    if (model.game != game) then
-      model.game = game; notifyObservers(Event.Move)
+    model.game = game; notifyObservers(Event.Move)
   }
 
   private def nextTurn() = {
@@ -89,16 +93,17 @@ case class Controller(private val model: Model) extends Observable {
     model.dice = Dice.roll(MOVES_PER_ROUND)
     notifyObservers(Event.DiceRolled)
     if checkersInBar then notifyObservers(Event.BarIsNotEmpty)
+    else if hasToBearOff then notifyObservers(Event.AllCheckersInTheHomeBoard)
     model.dice
   }
 
   def checkersInBar =
     if (currentPlayer == Player.White) game.barWhite > 0 else game.barBlack > 0
 
-  private def hasToBearOff =
-    game.numberOfPieces == game
-      .homeBoards(currentPlayer)
-      .filter(f => f.occupier == currentPlayer)
+  def hasToBearOff =
+    game.numberOfPieces(currentPlayer) == game
+      .homeBoard(currentPlayer)
+      .filter(_.occupier == currentPlayer)
       .map(_.number)
       .sum
 

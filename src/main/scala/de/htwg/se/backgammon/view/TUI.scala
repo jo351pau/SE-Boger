@@ -16,6 +16,9 @@ import de.htwg.se.backgammon.model.Input
 import de.htwg.se.backgammon.model.Quit
 import de.htwg.se.backgammon.model.Undo
 import de.htwg.se.backgammon.model.Redo
+import de.htwg.se.backgammon.model.BearOffMove
+import de.htwg.se.backgammon.model.Skip
+import de.htwg.se.backgammon.util.PrettyPrint.printGameOver
 
 class TUI(controller: Controller) extends Observer:
   controller.add(this)
@@ -38,9 +41,14 @@ class TUI(controller: Controller) extends Observer:
           s"You rolled the dice twice: ${controller.dice.toPrettyString}"
         )
       case Event.BarIsNotEmpty =>
-        printErr(
-          s"You have at least one checker in your bar, which die do you wanna use?"
+        println(
+          "It is at least one checker in your bar, which die do you wanna use?"
         )
+      case Event.AllCheckersInTheHomeBoard =>
+        println(
+          "All of your checkers are on your homeboard, so you can bear off."
+        )
+      case Event.GameOver => printGameOver(controller.game.winner.get)
 
   def inputLoop(): Unit =
     analyseInput(readLine) match
@@ -51,6 +59,7 @@ class TUI(controller: Controller) extends Observer:
       case Some(move: Move) => controller.doAndPublish(controller.put, move)
       case Some(_: Redo)    => controller.doAndPublish(controller.redo)
       case Some(_: Undo)    => controller.undoAndPublish(controller.undo)
+      case Some(_: Skip)    => controller.skip(controller.die)
       case Some(_)          => controller.quit
 
     if continue then inputLoop()
@@ -60,16 +69,21 @@ class TUI(controller: Controller) extends Observer:
       case "q"    => Input.Quit
       case "undo" => Input.Undo
       case "redo" => Input.Redo
+      case "skip" => Input.Skip
       case string => {
         Try({
           val input = Integer.parseInt(string)
-          Some(
-            if (controller.checkersInBar) then
-              BearInMove(controller.currentPlayer, input)
-            else Move(input, controller.die)
-          )
+          Some(createMove(input))
         }).getOrElse(None)
       }
+
+  def createMove(from: Int) = {
+    if (controller.checkersInBar) then
+      BearInMove(controller.currentPlayer, from)
+    else if (controller.hasToBearOff)
+    then BearOffMove(from, controller.die)
+    else Move(from, controller.die)
+  }
 
   def playerColor = (controller.currentPlayer.toLowerCase)
 
@@ -82,5 +96,6 @@ class TUI(controller: Controller) extends Observer:
   def printInputFormat = {
     if controller.checkersInBar then
       print(s"Dice (${controller.dice.mkString("|")}): ")
-    else print(s"${s"${controller.die}".bold} step/s: ")
+    else if (controller.game.winner.isEmpty)
+      print(s"${s"${controller.die}".bold} step/s: ")
   }
