@@ -14,10 +14,10 @@ class DefaultSetup(fields: Int, pieces: Int) extends Setup(fields, pieces) {
 
   override def toMap: Map[Int, Int] =
     Map(
-      0 -> Pieces.Most.value,
-      quarter(1) -> -Pieces.Most.value,
-      quarter(1) - 2 -> -Pieces.End.value,
-      quarter(2) - 1 -> Pieces.Mid.value
+      0 -> Pieces.Mid.value,
+      quarter(1) - 1 -> -Pieces.Most.value,
+      quarter(1) + 1 -> -Pieces.End.value,
+      quarter(2) - 1 -> Pieces.Most.value,
     )
 
   private enum Pieces(calculate: Int => Int) {
