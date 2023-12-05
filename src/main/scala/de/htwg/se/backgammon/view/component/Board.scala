@@ -10,6 +10,7 @@ import scalafx.scene.shape.Line
 import scalafx.scene.shape.Shape
 import de.htwg.se.backgammon.model.Player
 import javafx.scene.input.MouseEvent
+import de.htwg.se.backgammon.view.GUI
 
 class Board(
     x: Double,
@@ -25,11 +26,19 @@ class Board(
     points.foreach(p => p.activate(player))
   }
 
-  def getCheckers(): List[Checker] = points.flatMap(p => p.getCheckers())
+  def handleMouseEvent(
+      event: MouseEvent,
+      doHovering: GUIElement => Boolean = ((e) => true),
+      onClicked: GUIElement => Unit = (e => None)
+  ) = points.foreach(p => p.handleMouseEvent(event, doHovering, onClicked))
+
+  def getGUIElements(): List[GUIElement] =
+    points ++ points.flatMap(p => p.getCheckers())
 
   def find(p: Point => Boolean) = points.find(p)
   def indexOf(p: Point => Boolean) = points.indexOf(find(p).getOrElse(None))
-  def indexOfPointAt(event: MouseEvent) = indexOf(_.isOn(event))
+  def indexOf(p: Point) = points.indexOf(p)
+  def indexOfPointAt(event: MouseEvent) = indexOf(_.isMouseInside(event))
 
   def init = {
     children = Seq()

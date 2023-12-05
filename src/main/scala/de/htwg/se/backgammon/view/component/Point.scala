@@ -23,7 +23,8 @@ class Point(
     y: Array[Double],
     size: Size,
     color: Color
-) extends Pane {
+) extends Pane
+    with GUIElement {
   private var _field: Field = Field()
   private var checkers: Checkers = Checkers()
   def getCheckers() = checkers.asList
@@ -32,8 +33,7 @@ class Point(
   private def yCoord = y(0) - (if isUpsideDown then 0 else size.height)
   private var polygon: Polygon = null
 
-  init
-  def init = {
+  {
     val rectangle = new Rectangle {
       width = size.width
       height = size.height
@@ -50,21 +50,17 @@ class Point(
     children = Seq(polygon, rectangle, checkers)
   }
 
-  def onHovering() = {
+  override def onHovering() = {
     polygon.setEffect(new DropShadow(5.0, Color.BLACK))
   }
 
-  def onExited() = {
+  override def onMouseExit() = {
     polygon.setEffect(null)
   }
 
-  def isOn(e: MouseEvent) = {
+  override def isMouseInside(e: MouseEvent) = {
     e.getX() >= xCoord && e.getX() <= (xCoord + size.width) &&
     e.getY() >= yCoord && e.getY() <= (yCoord + size.height)
-  }
-
-  def mouseEntered(e: MouseEvent) = {
-    if (isOn(e)) then onHovering() else onExited()
   }
 
   def field: Field = _field
@@ -84,7 +80,6 @@ class Point(
     ) then return
 
     checkers.clear()
-
     if (field.number == 0) then return
 
     for (i <- (field.number - 1) to 0 by -1) {
@@ -93,7 +88,15 @@ class Point(
   }
 
   def createChecker(player: Player, postion: Int) = {
-    checkers.add(Checker(player, x(2), getCheckerY(postion)))
+    checkers.add(
+      Checker(
+        player,
+        x(2),
+        getCheckerY(postion),
+        false,
+        this
+      )
+    )
   }
 
   def getCheckerY(index: Int) = {
@@ -111,4 +114,5 @@ class Point(
   override def toString(): String =
     s"Point (${x.mkString(",")}/${y.mkString(",")})"
 
+  override def childElements = checkers.asList
 }

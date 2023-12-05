@@ -24,6 +24,8 @@ import de.htwg.se.backgammon.model.NoMove
 import de.htwg.se.backgammon.exception.NoMoveException
 
 case class Controller(private val model: Model) extends Observable {
+  def this(game: Game) = this(Model(game))
+
   def game = model.game
   def previousGame = model.previousGame
   def currentPlayer = model.player
