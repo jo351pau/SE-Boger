@@ -11,16 +11,21 @@ import scalafx.scene.shape.Shape
 import de.htwg.se.backgammon.model.Player
 import javafx.scene.input.MouseEvent
 import de.htwg.se.backgammon.view.GUI
+import scalafx.scene.Group
 
 class Board(
-    x: Double,
-    y: Double,
-    size: Size,
-    lineWidth: Int,
-    var points: List[Point] = List()
+    val xCoord: Double,
+    val yCoord: Double,
+    val size: Size,
+    lineWidth: Int
 ) extends Pane {
-  def xCoord = x
-  def yCoord = y
+  def this(cf: BoardConfiguration) = this(cf.x, cf.y, cf.size, cf.lineWidht)
+
+  var points: GUIList[Point] = GUIList()
+
+  {
+    children = Seq(Background(), points, Grid())
+  }
 
   def activateCheckers(player: Player) = {
     points.foreach(p => p.activate(player))
@@ -32,102 +37,104 @@ class Board(
       onClicked: GUIElement => Unit = (e => None)
   ) = points.foreach(p => p.handleMouseEvent(event, doHovering, onClicked))
 
-  def getGUIElements(): List[GUIElement] =
-    points ++ points.flatMap(p => p.getCheckers())
-
-  def find(p: Point => Boolean) = points.find(p)
-  def indexOf(p: Point => Boolean) = points.indexOf(find(p).getOrElse(None))
   def indexOf(p: Point) = points.indexOf(p)
-  def indexOfPointAt(event: MouseEvent) = indexOf(_.isMouseInside(event))
 
-  def init = {
-    children = Seq()
-    children.add(drawBackground)
-    points.foreach(children.add(_))
-    drawGrid.foreach(children.add(_))
+  def setGame(game: Game, pointHeight: Double) = {
+    if (game.length != points.length) {
+      points.set(Board.createPoints(this, game.length, pointHeight))
+    }
+    game.fields.zipWithIndex
+      .map { case (v, i) => (i, v) }
+      .foreach((index, field) => points(index).set(field))
   }
 
-  private def drawBackground: Rectangle = {
-    new Rectangle {
+  private class Background extends Rectangle {
+    {
       width = size.width
       height = size.height
-      this.setX(xCoord)
-      this.setY(yCoord)
-      this.setFill(CustomColor.c5)
+      x = xCoord
+      y = yCoord
+      fill = CustomColor.c5
       mouseTransparent = true
     }
   }
 
-  private def drawGrid: Seq[Shape] = {
-    val lineWidthSmall = 1
-    val grid = new Rectangle {
-      width = size.width + lineWidthSmall * 2
-      height = size.height + lineWidthSmall * 2
-      this.setStroke(CustomColor.c4)
-      this.setFill(null)
-      this.setStrokeWidth(lineWidth)
-      this.setX(xCoord - lineWidthSmall)
-      this.setY(yCoord - lineWidthSmall)
-      mouseTransparent = true
-    }
+  private class Grid extends Group {
+    {
+      val lineWidthSmall = 1
+      val middleLineX = xCoord + size.width / 2
 
-    val middleLineX = x + size.width / 2
-    val middleLine = new Line {
-      this.setStartX(middleLineX)
-      this.setEndX(middleLineX)
-      this.setStartY(yCoord)
-      this.setEndY(yCoord + size.height)
-      this.setStroke(CustomColor.c4)
-      this.setFill(null)
-      this.setStrokeWidth(lineWidth)
-      mouseTransparent = true
+      children = Seq(
+        new Rectangle {
+          width = size.width + lineWidthSmall * 2
+          height = size.height + lineWidthSmall * 2
+          this.x = xCoord - lineWidthSmall
+          this.y = yCoord - lineWidthSmall
+        },
+        new Line {
+          startX = middleLineX
+          endX = middleLineX
+          startY = yCoord
+          endY = yCoord + size.height
+        }
+      ).map(s => {
+        s.fill = null
+        s.mouseTransparent = true
+        s.stroke = CustomColor.c4
+        s.strokeWidth = lineWidth; s
+      })
     }
-    Seq(grid, middleLine)
+  }
+}
+
+object Board {
+  def margin(index: Int) =
+    if index == 0 then 0 else Configuration.pointMargin * index
+
+  def totalMargin(pointsPerSide: Int) =
+    (pointsPerSide - 1) * Configuration.pointMargin
+
+  def determineWidth(width: Double, pointsPerSide: Int): Double =
+    (width - totalMargin(pointsPerSide)) / pointsPerSide
+
+  def color(side: Int, position: Int) = {
+    if (side == 1) {
+      if (position % 2 == 0) then CustomColor.c2 else CustomColor.c3
+    } else if (position % 2 == 0) then CustomColor.c3
+    else CustomColor.c2
   }
 
-  private def createPoints(number: Int, height: Double): List[Point] = {
-    val marginX = 5
-    def margin(index: Int) = (if index == 0 then 0 else marginX * index)
-    val numberOnSide = (number / 2)
-    val width = (size.width - ((numberOnSide - 1) * marginX)) / numberOnSide
-    val baseY = y + size.height
-    val topSideY =
-      (0 to (numberOnSide - 1))
-        .map(x => Array(y, y, y + height): Array[Double])
-        .toList
-    val bottomSideY = (0 to (numberOnSide - 1))
-      .map(x => Array(baseY, baseY, baseY - height))
-      .toList
+  def createXArray(boardX: Double, position: Int, width: Double) = {
+    val positionOffset = (position * width)
+    val x = boardX + positionOffset
+
+    Array(x, x + width, x + (width / 2))
+  }
+
+  def createSideRange(side: Int, pointsPerSide: Int): Range = {
+    if (side == 1) then (0 to (pointsPerSide - 1))
+    else ((pointsPerSide - 1) to 0) by -1
+  }
+
+  def createPoints(board: Board, number: Int, height: Double) = {
+    val (size, xCoord, yCoord) = (board.size, board.xCoord, board.yCoord)
+
+    val pointsPerSide = (number / 2)
+    val width = determineWidth(size.width, pointsPerSide)
+
+    val baseY = yCoord + size.height
+    val topSideY = Array(yCoord, yCoord, yCoord + height)
+    val bottomSideY = Array(baseY, baseY, baseY - height)
+
     (0 to 1).flatMap { side =>
-      (if (side == 1) (0 to ((number / 2) - 1))
-       else
-         ((((number / 2) - 1) to 0) by -1)).map(index =>
+      createSideRange(side, pointsPerSide).map(index =>
         Point(
-          Array(
-            x + (index * width),
-            x + ((index + 1) * width),
-            x + ((index + 1) * width) - (width / 2)
-          ).map(_ + margin(index)),
-          if side == 1 then topSideY(index) else bottomSideY(index),
+          createXArray(xCoord, index, width).map(_ + margin(index)),
+          if side == 1 then topSideY else bottomSideY,
           size = Size(width, height),
-          if side == 1 then
-            (if (index % 2 == 0) then CustomColor.c2 else CustomColor.c3
-          )
-          else (if (index % 2 == 0) then CustomColor.c3
-                else CustomColor.c2)
+          color(side, index)
         )
       )
     }.toList
-  }
-
-  def setGame(game: Game, pointHeight: Double) = {
-    this.points = createPoints(game.length, pointHeight)
-    init
-
-    game.fields.zipWithIndex
-      .map { case (v, i) =>
-        (i, v)
-      }
-      .foreach((index, field) => points(index).field = field)
   }
 }

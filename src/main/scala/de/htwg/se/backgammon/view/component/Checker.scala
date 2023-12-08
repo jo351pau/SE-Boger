@@ -16,19 +16,6 @@ import de.htwg.se.backgammon.view.GUI
 
 val CHECKER_RADIUS = 17
 
-class Checkers extends Group {
-  private var elements: ListBuffer[Checker] = ListBuffer()
-  def add(checker: Checker) = {
-    elements += checker
-    children.add(checker)
-  }
-  def clear() = {
-    elements = ListBuffer()
-    children = Seq()
-  }
-  def asList = elements.toList
-}
-
 class Checker(
     var player: Player,
     val xCoord: Double,
@@ -49,8 +36,9 @@ class Checker(
   }
 
   override def onHovering() = {
-    if activated then this.setEffect(new DropShadow(5.0, Color.BLACK))
-    else this.setEffect(new DropShadow(3.0, Color.BLACK))
+    effect =
+      if activated then new DropShadow(5.0, Color.BLACK)
+      else new DropShadow(3.0, Color.BLACK)
   }
 
   override def isMouseInside(e: MouseEvent): Boolean = {
@@ -61,7 +49,7 @@ class Checker(
   }
 
   override def onMouseExit(): Unit = {
-    this.setEffect(new DropShadow(3.0, Color.BLACK))
+    effect = new DropShadow(3.0, Color.BLACK)
   }
 
   override def move(e: MouseEvent, offsetX: Double, offsetY: Double) = {

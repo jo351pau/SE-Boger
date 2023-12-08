@@ -25,8 +25,8 @@ class Point(
     color: Color
 ) extends Pane
     with GUIElement {
-  private var _field: Field = Field()
-  private var checkers: Checkers = Checkers()
+  private var field: Field = Field()
+  private var checkers: GUIList[Checker] = GUIList()
   def getCheckers() = checkers.asList
 
   private def xCoord = x(0)
@@ -51,11 +51,11 @@ class Point(
   }
 
   override def onHovering() = {
-    polygon.setEffect(new DropShadow(5.0, Color.BLACK))
+    polygon.effect = DropShadow(5.0, Color.BLACK)
   }
 
   override def onMouseExit() = {
-    polygon.setEffect(null)
+    polygon.effect = null
   }
 
   override def isMouseInside(e: MouseEvent) = {
@@ -63,10 +63,9 @@ class Point(
     e.getY() >= yCoord && e.getY() <= (yCoord + size.height)
   }
 
-  def field: Field = _field
-  def field_=(field: Field) = {
-    draw(_field, field)
-    _field = field
+  def set(field: Field) = {
+    draw(this.field, field)
+    this.field = field
   }
 
   def activate(player: Player) = {

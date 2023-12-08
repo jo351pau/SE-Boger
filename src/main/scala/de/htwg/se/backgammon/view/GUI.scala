@@ -39,32 +39,43 @@ import de.htwg.se.backgammon.view.component.Checker
 import de.htwg.se.backgammon.view.component.util.DraggedChecker
 import scalafx.application.HostServices
 import de.htwg.se.backgammon.view.component.*
+import de.htwg.se.backgammon.view.component.util.PlayerState
 import scalafx.scene.shape.DrawMode
 import de.htwg.se.backgammon.model.Player
 import de.htwg.se.backgammon.model.Move
 import de.htwg.se.backgammon.controller.PutCommand
 import de.htwg.se.backgammon.util.Command
 import de.htwg.se.backgammon.exception.MoveException
-
-val WIDTH = 800
-val HEIGHT = 600
-
-val BORD_WIDTH = 700
-val BORD_HEIGHT = 400
+import de.htwg.se.backgammon.model.DefinedMove
+import scalafx.scene.PerspectiveCamera
+import scala.util.Try
+import scala.util.Random
 object GUI extends JFXApp3 with Observer {
 
   var pane: Pane = null
   var board: Board = null
   var controller: Controller = null
-  var checker: DraggedChecker = DraggedChecker.empty
-  var isDragging = false
+  var draggedChecker: DraggedChecker = DraggedChecker.empty
+
+  val playerState: PlayerState = PlayerState(
+    Configuration.frameSize.width,
+    Configuration.frameSize.height
+  )
+
+  var dice: (Dice, Dice) = null
 
   override def update(event: Event, exception: Option[Throwable]): Unit =
     event match {
       case Event.Move =>
         board.setGame(controller.game, Configuration.pointHeight)
-    case Event.PlayerChanged => 
         board.activateCheckers(controller.currentPlayer)
+      case Event.PlayerChanged =>
+        playerState.set(controller.currentPlayer)
+        board.activateCheckers(controller.currentPlayer)
+      case Event.DiceRolled => {
+        dice._1.roll(controller.dice(0))
+        dice._2.roll(controller.dice(1))
+      }
       case Event.InvalidMove =>
         println(exception.getOrElse(MoveException()).getMessage())
       case _ =>
@@ -72,7 +83,6 @@ object GUI extends JFXApp3 with Observer {
   override def start(): Unit = {
     val game = new Game(24, 15)
     controller = new Controller(game)
-    controller.add(this)
 
     stage = new JFXApp3.PrimaryStage {
       title = "Backgammon"
@@ -93,7 +103,14 @@ object GUI extends JFXApp3 with Observer {
             4
           )
           board.setGame(new Game(24, 15), Configuration.pointHeight)
-          children = Seq(board, canvas)
+          dice = (createDice(), createDice())
+
+          children = Seq(
+            board,
+            playerState,
+            dice._1,
+            dice._2
+          )
         }
 
         onMouseClicked = (event: MouseEvent) => {
@@ -102,7 +119,13 @@ object GUI extends JFXApp3 with Observer {
 
         onMouseMoved = (event: MouseEvent) => {
           board.handleMouseEvent(event, doHovering = doHovering)
-          if (checker.isDefined) then checker.move(event)
+          if (draggedChecker.isDefined) then draggedChecker.move(event)
+        }
+
+        onShown = () => {
+          controller.add(GUI)
+          dice._1.roll(controller.dice(0))
+          dice._2.roll(controller.dice(1))
         }
 
         content = pane
@@ -112,75 +135,39 @@ object GUI extends JFXApp3 with Observer {
   }
 
   def doHovering(element: GUIElement): Boolean = element match {
-    case point: Point     => this.checker.isDefined
-    case checker: Checker => this.checker.isEmpty
+    case point: Point     => draggedChecker.isDefined
+    case checker: Checker => draggedChecker.isEmpty
     case _                => true
   }
 
   def onBoardClicked(element: GUIElement): Unit = element match {
-    case point: Point if this.checker.isDefined => {
-      val from = board.indexOf(this.checker.point)
+    case point: Point if draggedChecker.isDefined => {
+      val from = board.indexOf(draggedChecker.point)
       val to = board.indexOf(point)
 
-      val steps = controller.currentPlayer match {
-        case Player.White => to - from
-        case _            => from - to
-      }
-      controller.doAndPublish(controller.put, Move(from, steps))
+      controller.doAndPublish(
+        controller.put,
+        DefinedMove(controller.currentPlayer, from, to)
+      )
 
-      pane.children.remove(this.checker)
-      this.checker.reset()
+      pane.children.remove(this.draggedChecker)
+      draggedChecker.reset()
     }
     case checker: Checker
-        if this.checker.isEmpty
+        if draggedChecker.isEmpty
           && checker.player == controller.currentPlayer => {
-      this.checker = new DraggedChecker(checker)
-      pane.children.add(this.checker)
+      draggedChecker = new DraggedChecker(checker)
+      pane.children.add(draggedChecker)
     }
     case _ =>
   }
 
-  def drawPlayer(gc: GraphicsContext) = {
-    val MARGIN_TOP = 25
-    val MARGIN_LEFT = 25
-    val PADDING = 40
-    val BOX_WIDTH = 50
-    val CORNER_RADIUS = 5
-    val mid = WIDTH / 2 - BOX_WIDTH / 2
-    gc.setFill(Color.WHITESMOKE)
-    gc.fillRoundRect(
-      MARGIN_LEFT,
-      MARGIN_TOP,
-      BOX_WIDTH,
-      BOX_WIDTH,
-      CORNER_RADIUS,
-      CORNER_RADIUS
-    )
-    gc.setStroke(CustomColor.c1)
-    gc.strokeRoundRect(
-      MARGIN_LEFT,
-      MARGIN_TOP,
-      BOX_WIDTH,
-      BOX_WIDTH,
-      CORNER_RADIUS,
-      CORNER_RADIUS
-    )
-    gc.setFill(Color.rgb(188, 138, 95))
-    gc.fillRoundRect(
-      MARGIN_LEFT,
-      HEIGHT - MARGIN_TOP - BOX_WIDTH,
-      BOX_WIDTH,
-      BOX_WIDTH,
-      CORNER_RADIUS,
-      CORNER_RADIUS
-    )
-    gc.strokeRoundRect(
-      MARGIN_LEFT,
-      HEIGHT - MARGIN_TOP - BOX_WIDTH,
-      BOX_WIDTH,
-      BOX_WIDTH,
-      CORNER_RADIUS,
-      CORNER_RADIUS
+  def createDice(): Dice = {
+    Dice(
+      Random.between(1, 7),
+      Configuration.boardX,
+      Configuration.boardY,
+      Configuration.boardSize
     )
   }
 

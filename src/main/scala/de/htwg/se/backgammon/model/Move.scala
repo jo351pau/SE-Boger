@@ -8,6 +8,16 @@ case class Move(from: Int, steps: Int) extends Input {
     case _            => from - steps
   }
 }
+class DefinedMove(player: Player, from: Int, to: Int)
+    extends Move(
+      from,
+      player match {
+        case Player.White => to - from
+        case _            => from - to
+      }
+    ) {
+  override def whereToGo(game: Game) = to
+}
 
 class BearInMove(val player: Player, steps: Int)
     extends Move(BAR_POSITION, steps) {
