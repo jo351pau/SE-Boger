@@ -1,77 +1,40 @@
 package de.htwg.se.backgammon.view.component
 
-import scalafx.scene.image.ImageView
-import scalafx.scene.image.Image
-import scala.concurrent.Await
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
+import scalafx.scene.Group
 import scala.util.Random
-import scala.io.Source
-import de.htwg.se.backgammon.view.GUI.board
-import javafx.scene.input.MouseEvent
-import scalafx.animation.Timeline
-import scalafx.animation.KeyFrame
-import scalafx.util.Duration
 
-import scala.concurrent.duration._
-import java.util.concurrent._
-import scala.concurrent.{Await, ExecutionContext, Future}
-import scala.concurrent.ExecutionContext.Implicits.global
-import java.util.concurrent.ScheduledThreadPoolExecutor
-
-val DICE_SIZE = 40
-
-class Dice(
-    var _dots: Int,
-    val boardX: Double,
-    val boardY: Double,
-    val boardSize: Size
-) extends ImageView {
-  def dots = _dots
-  def dots_=(d: Int) = {
-    image = imageWithDots(d)
-    _dots = d
-  }
-  {
-    val padding = 100
-    val boardMiddleY = boardY + (boardSize.height / 2) - DICE_SIZE / 2
-    image = imageWithDots(_dots)
-    x = boardX + padding + Random.between(0, boardX + boardSize.width - padding)
-    y = boardMiddleY + Random.between(-20, 20)
-    fitHeight = 40
-    fitWidth = 40
+class Dice extends GUIList[Die] {
+  def create(
+      dice: Int,
+      boardX: Double,
+      boardY: Double,
+      boardSize: Size
+  ): Dice = {
+    set(List.tabulate(dice)(_ => create(boardX, boardY, boardSize))); this
   }
 
-  def roll(number: Int) = {
-    val padding = 100
-    val boardMiddleY = boardY + (boardSize.height / 2) - DICE_SIZE / 2
-    image = imageWithDots(_dots)
-    x = boardX + padding + Random.between(0, boardSize.width - (padding * 2))
-    y = boardMiddleY + Random.between(-20, 20)
-    rotate = Random.between(-25, 25)
+  private def create(boardX: Double, boardY: Double, boardSize: Size): Die = {
+    new Die(Random.between(1, 7), boardX, boardY, boardSize)
+  }
 
-    val ex = new ScheduledThreadPoolExecutor(1)
-    var future: ScheduledFuture[_] = null
-    val task: Runnable = new Runnable {
+  def roll(dots: List[Int]) = {
+    asList.zipWithIndex.foreach((die: Die, index) => {
+      if (dots.length > index) {
+        die.visible = true
+        die.roll(dots(index))
+      } else { die.visible = false }
+    })
+  }
 
-      val repetitions = 10
-      var done = 0
-      def run(): Unit = {
-        val random = Random.between(1, 7)
-        dots = if random == dots then Random.between(1, 7) else { random }
-        done = done + 1
-        if (done >= repetitions) {
-          dots = number
-          future.cancel(true)
-        }
-      }
+  private def randomizePosition(die: Die, shouldNotOverlapsWith: List[Die]) = {
+    die.randomizePosition
+    while (
+      shouldNotOverlapsWith.find(other => other.overlaps(die).get()).isDefined
+    ) {
+      die.randomizePosition
     }
-    future = ex.scheduleAtFixedRate(task, 1, 100, TimeUnit.MILLISECONDS)
   }
 
-  private def imageWithDots(dots: Int) = new Image(
-    s"file:src/main/resources/$dots.png"
-  )
-
-  private def randomImage: Image = imageWithDots(Random.between(1, 7))
+  override def toString =
+    if length > 0 then s"Dice: ${asList.mkString(",")}" else "Empty"
 }

@@ -50,11 +50,15 @@ import de.htwg.se.backgammon.model.DefinedMove
 import scalafx.scene.PerspectiveCamera
 import scala.util.Try
 import scala.util.Random
-object GUI extends JFXApp3 with Observer {
+import scalafx.application.Platform
+import component.Dice
+import de.htwg.se.backgammon.util.PrettyPrint.PrintBold
+
+class GUI(controller: Controller) extends JFXApp3 with Observer {
+  controller.add(this)
 
   var pane: Pane = null
   var board: Board = null
-  var controller: Controller = null
   var draggedChecker: DraggedChecker = DraggedChecker.empty
 
   val playerState: PlayerState = PlayerState(
@@ -62,28 +66,34 @@ object GUI extends JFXApp3 with Observer {
     Configuration.frameSize.height
   )
 
-  var dice: (Dice, Dice) = null
+  var dice: Dice = Dice()
 
-  override def update(event: Event, exception: Option[Throwable]): Unit =
-    event match {
-      case Event.Move =>
-        board.setGame(controller.game, Configuration.pointHeight)
-        board.activateCheckers(controller.currentPlayer)
-      case Event.PlayerChanged =>
-        playerState.set(controller.currentPlayer)
-        board.activateCheckers(controller.currentPlayer)
-      case Event.DiceRolled => {
-        dice._1.roll(controller.dice(0))
-        dice._2.roll(controller.dice(1))
-      }
-      case Event.InvalidMove =>
-        println(exception.getOrElse(MoveException()).getMessage())
-      case _ =>
+  override def update(event: Event, exception: Option[Throwable]): Unit = {
+    Platform.runLater(onEvent(event, exception))
+  }
+
+  def onEvent(event: Event, exception: Option[Throwable]) = event match {
+    case Event.Move =>
+      board.setGame(controller.game, Configuration.pointHeight)
+      board.activateCheckers(controller.currentPlayer)
+
+    case Event.PlayerChanged => {
+      playerState.set(controller.currentPlayer)
+      board.activateCheckers(controller.currentPlayer)
+      setTitle()
     }
-  override def start(): Unit = {
-    val game = new Game(24, 15)
-    controller = new Controller(game)
+    case Event.DiceRolled => {
+      dice.roll(controller.dice)
+    }
+    case Event.InvalidMove =>
+      println(exception.getOrElse(MoveException()).getMessage())
+    case _ =>
+  }
 
+  def setTitle() = stage.title =
+    s"Backgammon - ${controller.currentPlayer} it's your turn!"
+
+  override def start(): Unit = {
     stage = new JFXApp3.PrimaryStage {
       title = "Backgammon"
       scene = new Scene(
@@ -102,14 +112,18 @@ object GUI extends JFXApp3 with Observer {
             Configuration.boardSize,
             4
           )
-          board.setGame(new Game(24, 15), Configuration.pointHeight)
-          dice = (createDice(), createDice())
+          board.setGame(controller.game, Configuration.pointHeight)
+          dice.create(
+            2,
+            Configuration.boardX,
+            Configuration.boardY,
+            Configuration.boardSize
+          )
 
           children = Seq(
             board,
             playerState,
-            dice._1,
-            dice._2
+            dice
           )
         }
 
@@ -122,17 +136,18 @@ object GUI extends JFXApp3 with Observer {
           if (draggedChecker.isDefined) then draggedChecker.move(event)
         }
 
+
         onShown = () => {
-          controller.add(GUI)
-          dice._1.roll(controller.dice(0))
-          dice._2.roll(controller.dice(1))
+          dice.roll(controller.dice)
         }
 
         content = pane
       }
     }
+    setTitle()
     board.activateCheckers(controller.currentPlayer)
   }
+
 
   def doHovering(element: GUIElement): Boolean = element match {
     case point: Point     => draggedChecker.isDefined
@@ -161,14 +176,4 @@ object GUI extends JFXApp3 with Observer {
     }
     case _ =>
   }
-
-  def createDice(): Dice = {
-    Dice(
-      Random.between(1, 7),
-      Configuration.boardX,
-      Configuration.boardY,
-      Configuration.boardSize
-    )
-  }
-
 }

@@ -25,7 +25,7 @@ class GUIList[E <: Node] extends Group, IndexedSeq[E] {
     children = Seq()
   }
 
-  def asList = elements.toList
+  def asList: List[E] = elements.toList
 
   override def apply(i: Int): E = elements(i)
 
