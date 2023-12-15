@@ -1,4 +1,5 @@
-package de.htwg.se.backgammon.model
+package de.htwg.se.backgammon.model.base
+import base.Game
 
 val MOVES_PER_ROUND = 2
 
@@ -11,7 +12,7 @@ class Model(private var _game: Game, var player: Player) {
     movesThisRound = Nil; player
   }
 
-  var dice = Dice.roll(MOVES_PER_ROUND)
+  var dice = base.Dice.roll(MOVES_PER_ROUND)
 
   var previousGame = _game
 

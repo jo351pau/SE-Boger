@@ -1,4 +1,4 @@
-package de.htwg.se.backgammon.model
+package de.htwg.se.backgammon.model.base
 
 abstract class Setup(val fields: Int, val pieces: Int) {
   def toMap: Map[Int, Int]
