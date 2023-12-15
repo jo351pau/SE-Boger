@@ -3,16 +3,18 @@ package de.htwg.se.backgammon.controller.base
 import de.htwg.se.backgammon.util.Observable
 import de.htwg.se.backgammon.util.Event
 import de.htwg.se.backgammon.util.Manager
-import de.htwg.se.backgammon.model.Model
-import de.htwg.se.backgammon.model.Move
+import de.htwg.se.backgammon.model.IModel
+import de.htwg.se.backgammon.model.IGame
+import de.htwg.se.backgammon.model.IMove
 import de.htwg.se.backgammon.model.Player
-import de.htwg.se.backgammon.model.Dice
+import de.htwg.se.backgammon.model.IDice
 import de.htwg.se.backgammon.exception.NotYourFieldException
 import de.htwg.se.backgammon.exception.WrongDirectionException
 import de.htwg.se.backgammon.exception.DieNotExistException
 import de.htwg.se.backgammon.exception.FieldDoesNotExistException
-import de.htwg.se.backgammon.model.MOVES_PER_ROUND
-import de.htwg.se.backgammon.model.Game
+import de.htwg.se.backgammon.model.base.MOVES_PER_ROUND
+import de.htwg.se.backgammon.model.IGame
+import de.htwg.se.backgammon.model.base.Dice
 
 import scala.util.Try
 import scala.util.Failure
@@ -20,31 +22,29 @@ import scala.util.Success
 
 import de.htwg.se.backgammon.controller.strategy.ValidateMoveStrategy
 import de.htwg.se.backgammon.model.GameState
-import de.htwg.se.backgammon.model.NoMove
+import de.htwg.se.backgammon.model.base.NoMove
 import de.htwg.se.backgammon.exception.NoMoveException
 import de.htwg.se.backgammon.controller.IController
 import de.htwg.se.backgammon.controller.PutCommand
 
-case class Controller(private val model: Model) extends IController {
-  def this(game: Game) = this(Model(game))
-
+case class Controller(private val model: IModel) extends IController {
   def game = model.game
   def previousGame = model.previousGame
   def currentPlayer = model.player
   def dice = model.dice
   def die: Int = dice(0)
 
-  val manager = new Manager[Game, GameState]
-  def doAndPublish(doThis: Move => Try[Game], move: Move): Unit = {
+  val manager = new Manager[IGame, GameState]
+  def doAndPublish(doThis: IMove => Try[IGame], move: IMove): Unit = {
     if checkMove(move) then
       doThis(move).match {
-        case Success(game: Game) => handle(game, move.steps)
+        case Success(game: IGame) => handle(game, move.steps)
         case Failure(exception) =>
           notifyObservers(Event.InvalidMove, Some(exception))
       }
   }
 
-  def doAndPublish(doThis: Move => Try[Game]): Unit =
+  def doAndPublish(doThis: IMove => Try[IGame]): Unit =
     manager.stackCommand match {
       case Some(command: PutCommand) => doAndPublish(doThis, command.move)
       case _ => notifyObservers(Event.InvalidMove, Some(NoMoveException()))
@@ -65,7 +65,7 @@ case class Controller(private val model: Model) extends IController {
     if (model.dice.length == 1) nextTurn()
   }
 
-  def handle(game: Game, steps: Int) = {
+  def handle(game: IGame, steps: Int) = {
     this used steps
     this.game = game
     if (model.dice.isEmpty) {
@@ -75,17 +75,17 @@ case class Controller(private val model: Model) extends IController {
     if (game.winner.isDefined) then notifyObservers(Event.GameOver)
   }
 
-  def skip(steps: Int): Game = {
+  def skip(steps: Int): IGame = {
     handle(game, steps); game
   }
-  def put(move: Move): Try[Game] = manager.doStep(game, PutCommand(move))
-  def redo(move: Move): Try[Game] = manager.redoStep(game)
+  def put(move: IMove): Try[IGame] = manager.doStep(game, PutCommand(move))
+  def redo(move: IMove): Try[IGame] = manager.redoStep(game)
   def undo: Option[GameState] = manager.undoStep()
   def quit: Unit = notifyObservers(Event.Quit)
 
   override def toString = game.toString
 
-  private def game_=(game: Game) = {
+  private def game_=(game: IGame) = {
     model.game = game; notifyObservers(Event.Move)
   }
 
@@ -94,7 +94,7 @@ case class Controller(private val model: Model) extends IController {
   }
 
   private def roll(): List[Int] = {
-    model.dice = Dice.roll(MOVES_PER_ROUND)
+    model.dice = Dice().roll(MOVES_PER_ROUND)
     notifyObservers(Event.DiceRolled)
     if checkersInBar then notifyObservers(Event.BarIsNotEmpty)
     else if hasToBearOff then notifyObservers(Event.AllCheckersInTheHomeBoard)
@@ -114,7 +114,7 @@ case class Controller(private val model: Model) extends IController {
   private def used(dice: Int) = model.dice =
     model.dice.patch(model.dice.indexOf(dice), Nil, 1)
 
-  private def checkMove(move: Move): Boolean =
+  private def checkMove(move: IMove): Boolean =
     ValidateMoveStrategy(this, move).execute() match {
       case Failure(ex: Exception) =>
         notifyObservers(Event.InvalidMove, Some(ex)); false

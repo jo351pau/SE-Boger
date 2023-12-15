@@ -2,7 +2,7 @@ package de.htwg.se.backgammon.view.component
 
 import scalafx.scene.canvas.GraphicsContext
 import javax.swing.plaf.basic.BasicBorders.MarginBorder
-import de.htwg.se.backgammon.model.Game
+import de.htwg.se.backgammon.model.IGame
 import scalafx.scene.layout.Pane
 import scalafx.scene.shape.Rectangle
 import scalafx.scene.shape.Line
@@ -39,7 +39,7 @@ class Board(
 
   def indexOf(p: Point) = points.indexOf(p)
 
-  def setGame(game: Game, pointHeight: Double) = {
+  def setGame(game: IGame, pointHeight: Double) = {
     if (game.length != points.length) {
       points.set(Board.createPoints(this, game.length, pointHeight))
     }

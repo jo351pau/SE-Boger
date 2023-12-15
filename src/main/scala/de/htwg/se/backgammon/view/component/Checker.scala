@@ -1,7 +1,6 @@
 package de.htwg.se.backgammon.view.component
 
 import scalafx.scene.layout.Pane
-import de.htwg.se.backgammon.model.Field
 import de.htwg.se.backgammon.model.Player
 import scalafx.scene.shape.Ellipse
 import scalafx.scene.effect.DropShadow

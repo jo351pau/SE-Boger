@@ -2,7 +2,8 @@ package de.htwg.se.backgammon.view.component
 
 import scalafx.scene.canvas.GraphicsContext
 import javafx.scene.paint.Color
-import de.htwg.se.backgammon.model.Field
+import de.htwg.se.backgammon.model.IField
+import de.htwg.se.backgammon.model.base.Field
 import de.htwg.se.backgammon.model.Player
 import scalafx.scene.effect.DropShadow
 import scalafx.Includes.jfxColor2sfx
@@ -24,7 +25,7 @@ class Point(
     color: Color
 ) extends Pane
     with GUIElement {
-  private var field: Field = Field()
+  private var field: IField = Field()
   private var checkers: GUIList[Checker] = GUIList()
   def getCheckers() = checkers.asList
 
@@ -62,7 +63,7 @@ class Point(
     e.getY() >= yCoord && e.getY() <= (yCoord + size.height)
   }
 
-  def set(field: Field) = {
+  def set(field: IField) = {
     draw(this.field, field)
     this.field = field
   }
@@ -71,7 +72,7 @@ class Point(
     checkers.asList.foreach(c => c.activated = (player == field.occupier))
   }
 
-  def draw(previous: Field, field: Field): Unit = {
+  def draw(previous: IField, field: IField): Unit = {
     if (
       (previous.number == field.number &&
       previous.occupier == field.occupier)

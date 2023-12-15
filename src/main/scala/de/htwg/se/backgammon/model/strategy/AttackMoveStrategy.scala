@@ -1,12 +1,12 @@
 package de.htwg.se.backgammon.model.strategy
 
-import de.htwg.se.backgammon.model.Game
+import de.htwg.se.backgammon.model.IGame
 import de.htwg.se.backgammon.model.Player
-import de.htwg.se.backgammon.model.Field
+import de.htwg.se.backgammon.model.base.Field
 
-trait AttackMoveStrategy(game: Game, attacker: Player, to: Int)
+trait AttackMoveStrategy(game: IGame, attacker: Player, to: Int)
     extends MoveCheckersStrategy {
-  override def placeCheckers: Game = {
+  override def placeCheckers: IGame = {
     set(to -> Field(attacker))
     bar(defender).++
   }

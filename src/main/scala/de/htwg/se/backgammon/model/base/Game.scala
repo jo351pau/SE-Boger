@@ -1,9 +1,5 @@
 package de.htwg.se.backgammon.model.base
 
-import strategy.MoveStrategy
-import strategy.ValidateBearInMoveStrategy
-import strategy.DefaultValidateMoveStrategy
-
 import scala.util.Random
 import scala.util.Try
 import scala.util.Success
@@ -11,17 +7,23 @@ import java.util.Map.Entry
 import scala.util.Failure
 import org.scalactic.Fail
 import de.htwg.se.backgammon.model.strategy.ValidateBearOffMoveStrategy
-import base.Field
+import de.htwg.se.backgammon.model.IGame
+import de.htwg.se.backgammon.model.IField
+import de.htwg.se.backgammon.model.IMove
+import de.htwg.se.backgammon.model.Player
+import de.htwg.se.backgammon.model.strategy.ValidateBearInMoveStrategy
+import de.htwg.se.backgammon.model.strategy.DefaultValidateMoveStrategy
+import de.htwg.se.backgammon.model.strategy.MoveStrategy
 
-case class Game(fields: List[Field], barWhite: Int = 0, barBlack: Int = 0)
-    extends GameSeq(fields) {
+case class Game(fields: List[IField], barWhite: Int = 0, barBlack: Int = 0)
+    extends IGame with GameSeq(fields)  {
 
   def this(fields: Int, pieces: Int) =
     this(Game.create(DefaultSetup(fields, pieces)))
 
   def this(setup: Setup) = this(Game.create(setup))
 
-  def move(move: Move): Try[Game] = {
+  def move(move: IMove): Try[IGame] = {
     val to = move.whereToGo(this)
     val validateStrategy = move match {
       case move: BearInMove =>
@@ -57,9 +59,9 @@ case class Game(fields: List[Field], barWhite: Int = 0, barBlack: Int = 0)
   override def toString: String =
     s"$barWhite : ${fields.mkString(" ")} : $barBlack"
 
-  def ==(that: Game): Boolean = fields.equals(that.fields)
+  def ==(that: IGame): Boolean = fields.equals(that.fields)
 
-  def !=(that: Game): Boolean = !(this == that)
+  def !=(that: IGame): Boolean = !(this == that)
 
 }
 
@@ -74,15 +76,7 @@ private object Game {
   }
 }
 
-case class GameState(game: Game, move: Move) {
-  def isValid = !move.isInstanceOf[NoMove]
-}
-
-object GameState {
-  def invalid = GameState(Game(List()), NoMove())
-}
-
-trait GameSeq(private val fields: List[Field]) extends IndexedSeq[Field] {
-  override def apply(i: Int): Field = fields(i)
+trait GameSeq(private val fields: List[IField]) extends IndexedSeq[IField] {
+  override def apply(i: Int): IField = fields(i)
   override def length: Int = fields.length
 }

@@ -1,4 +1,4 @@
-package de.htwg.se.backgammon.model.base
+package de.htwg.se.backgammon.model
 
 enum Player {
   case White

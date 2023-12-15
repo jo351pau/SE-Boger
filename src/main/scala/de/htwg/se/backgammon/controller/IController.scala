@@ -1,27 +1,27 @@
 package de.htwg.se.backgammon.controller
 
 import de.htwg.se.backgammon.util.Observable
-import de.htwg.se.backgammon.model.Game
-import de.htwg.se.backgammon.model.Move
 import de.htwg.se.backgammon.model.GameState
 import de.htwg.se.backgammon.model.Player
+import de.htwg.se.backgammon.model.IGame
+import de.htwg.se.backgammon.model.IMove
 import scala.util.Try
 
 trait IController extends Observable {
-  def game: Game
-  def previousGame: Game
+  def game: IGame
+  def previousGame: IGame
   def currentPlayer: Player
   def dice: List[Int]
   def die: Int
   def checkersInBar: Boolean
   def hasToBearOff: Boolean
 
-  def doAndPublish(doThis: Move => Try[Game], move: Move): Unit
-  def doAndPublish(doThis: Move => Try[Game]): Unit
+  def doAndPublish(doThis: IMove => Try[IGame], move: IMove): Unit
+  def doAndPublish(doThis: IMove => Try[IGame]): Unit
   def undoAndPublish(doThis: => Option[GameState]): Unit
-  def skip(steps: Int): Game
-  def put(move: Move): Try[Game]
-  def redo(move: Move): Try[Game]
+  def skip(steps: Int): IGame
+  def put(move: IMove): Try[IGame]
+  def redo(move: IMove): Try[IGame]
   def undo: Option[GameState]
   def quit: Unit
 

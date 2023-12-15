@@ -1,6 +1,9 @@
 package de.htwg.se.backgammon.model.base
 
-class Field(val pieces: Int) {
+import de.htwg.se.backgammon.model.Player
+import de.htwg.se.backgammon.model.IField
+
+class Field(val pieces: Int) extends IField {
 
   def this() = this(0)
 
@@ -28,11 +31,11 @@ class Field(val pieces: Int) {
 
   def isEmpty() = pieces == 0
 
-  def hasSameOccupierAs(that: Field) = isOccupiedBy(that.occupier)
+  def hasSameOccupierAs(that: IField) = isOccupiedBy(that.occupier)
 
-  def hasDifferentOccupierThen(that: Field) = !(isOccupiedBy(that.occupier))
+  def hasDifferentOccupierThen(that: IField) = !(isOccupiedBy(that.occupier))
 
-  def isOccupiedBy(player: Player) : Boolean =
+  def isOccupiedBy(player: Player): Boolean =
     occupier == Player.None || player == Player.None || occupier == player
 
   def isNotOccupiedBy(player: Player) = !(isOccupiedBy(player))

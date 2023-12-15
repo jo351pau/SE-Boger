@@ -1,8 +1,7 @@
 package de.htwg.se.backgammon.util
 
 import de.htwg.se.backgammon.model.Player
-import de.htwg.se.backgammon.model.Game
-import de.htwg.se.backgammon.model.Game
+import de.htwg.se.backgammon.model.IGame
 
 object PrettyPrint {
   private def clean = {
@@ -10,11 +9,11 @@ object PrettyPrint {
     print("\u001b[H")
   }
 
-  def printNew(string: String | Game) = {
+  def printNew(string: String | IGame) = {
     clean; println(s"${string}\n")
   }
 
-  def printGameWithIndizies(game: Game) = {
+  def printGameWithIndizies(game: IGame) = {
     clean
     println(
       s"${game.barWhite} : " + underline(
@@ -44,9 +43,9 @@ object PrettyPrint {
     println(s"${victoryMessage}\nCongratulation to ${s"${player}".bold}!!")
   }
 
-  implicit class MarkDifferencesBetweenGames(original: Game) {
+  implicit class MarkDifferencesBetweenGames(original: IGame) {
 
-    def markDifferencesTo(modified: Game): String = {
+    def markDifferencesTo(modified: IGame): String = {
       var result = ""
       if (original.barWhite != modified.barWhite)
         result += bold(s"${original.barWhite}")

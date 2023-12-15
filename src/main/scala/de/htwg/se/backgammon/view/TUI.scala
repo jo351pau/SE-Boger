@@ -3,8 +3,8 @@ package de.htwg.se.backgammon.view
 import scala.util.Try
 import de.htwg.se.backgammon.controller.IController
 import de.htwg.se.backgammon.exception.MoveException
-import de.htwg.se.backgammon.model.Move
-import de.htwg.se.backgammon.model.BearInMove
+import de.htwg.se.backgammon.model.base.Move
+import de.htwg.se.backgammon.model.base.BearInMove
 import de.htwg.se.backgammon.util.Event
 import de.htwg.se.backgammon.util.Observer
 import de.htwg.se.backgammon.util.PrettyPrint.MarkDifferencesBetweenGames
@@ -16,7 +16,7 @@ import de.htwg.se.backgammon.model.Input
 import de.htwg.se.backgammon.model.Quit
 import de.htwg.se.backgammon.model.Undo
 import de.htwg.se.backgammon.model.Redo
-import de.htwg.se.backgammon.model.BearOffMove
+import de.htwg.se.backgammon.model.base.BearOffMove
 import de.htwg.se.backgammon.model.Skip
 import de.htwg.se.backgammon.util.PrettyPrint.printGameOver
 

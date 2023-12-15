@@ -1,14 +1,16 @@
 package de.htwg.se.backgammon.model.strategy
 
-import de.htwg.se.backgammon.model.Game
-import de.htwg.se.backgammon.model.Move
-import de.htwg.se.backgammon.model.BearInMove
-import de.htwg.se.backgammon.model.Field
+import de.htwg.se.backgammon.model.IGame
+import de.htwg.se.backgammon.model.IMove
+import de.htwg.se.backgammon.model.IField
 import de.htwg.se.backgammon.model.Player
-import de.htwg.se.backgammon.model.BearOffMove
+import de.htwg.se.backgammon.model.base.Game
+import de.htwg.se.backgammon.model.base.Move
+import de.htwg.se.backgammon.model.base.BearInMove
+import de.htwg.se.backgammon.model.base.BearOffMove
 
 object MoveStrategy {
-  def apply(game: Game, move: Move, to: Int): MoveStrategy = move match {
+  def apply(game: IGame, move: IMove, to: Int): IMoveStrategy = move match {
     case move: BearInMove => {
       if game(to) isNotOccupiedBy move.player then
         new BearInMoveStrategy(game, move.player, to)
@@ -33,13 +35,13 @@ object MoveStrategy {
   }
 }
 
-trait MoveStrategy(var game: Game) {
-  def execute(): Game
+trait IMoveStrategy(var game: IGame) {
+  def execute(): IGame
 
-  def set(change: (Int, Field)): Game = set(Map(change))
+  def set(change: (Int, IField)): IGame = set(Map(change))
 
-  def set(changes: Map[Int, Field]): Game = {
-    game = Game(
+  def set(changes: Map[Int, IField]): IGame = {
+    game = new Game(
       List.tabulate(game.length)(i => changes.getOrElse(i, game(i)))
     ); game
   }
@@ -47,25 +49,25 @@ trait MoveStrategy(var game: Game) {
   def set(
       barWhite: Int = game.barWhite,
       barBlack: Int = game.barBlack
-  ): Game = {
-    game = Game(game.fields, barWhite, barBlack); game
+  ): IGame = {
+    game = new Game(game.fields, barWhite, barBlack); game
   }
 }
 
-abstract class MoveCheckersStrategy(game: Game) extends MoveStrategy(game) {
+abstract class MoveCheckersStrategy(game: IGame) extends IMoveStrategy(game) {
 
-  def execute(): Game = placeCheckers; pickUpCheckers
+  def execute(): IGame = placeCheckers; pickUpCheckers
 
-  def placeCheckers: Game
+  def placeCheckers: IGame
 
-  def pickUpCheckers: Game
+  def pickUpCheckers: IGame
 
-  trait Bar { def ++ : Game; def -- : Game }
+  trait Bar { def ++ : IGame; def -- : IGame }
   def bar(player: Player): Bar = new Bar {
     private def add(num: Int) = player match {
       case Player.White => set(barWhite = game.barWhite + num)
       case _            => set(barBlack = game.barBlack + num)
     }
-    def ++ : Game = add(1); def -- : Game = add(-1)
+    def ++ : IGame = add(1); def -- : IGame = add(-1)
   }
 }
