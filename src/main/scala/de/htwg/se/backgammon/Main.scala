@@ -8,12 +8,14 @@ import de.htwg.se.backgammon.view.GUI
 import scalafx.application.JFXApp3
 import scala.concurrent.Future
 import scala.concurrent.Await
+import de.htwg.se.backgammon.model.base.Dice
 
 private val NUMBER_OF_FIELDS = 24
 private val NUMBER_OF_FIGURES = 15
 
 object Main {
-  val controller = new Controller(new Model(new Game(NUMBER_OF_FIELDS, NUMBER_OF_FIGURES)))
+  val model = new Model(new Game(NUMBER_OF_FIELDS, NUMBER_OF_FIGURES),  Dice())
+  val controller = new Controller(model)
   val tui = new TUI(controller)
   val gui = new GUI(controller)
 

@@ -6,6 +6,8 @@ trait IModel {
 
   var dice: List[Int]
 
+  def roll: List[Int]
+
   def game_=(game: IGame): Unit
 
   def game: IGame

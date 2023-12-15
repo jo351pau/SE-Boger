@@ -94,7 +94,7 @@ case class Controller(private val model: IModel) extends IController {
   }
 
   private def roll(): List[Int] = {
-    model.dice = Dice().roll(MOVES_PER_ROUND)
+    model.roll
     notifyObservers(Event.DiceRolled)
     if checkersInBar then notifyObservers(Event.BarIsNotEmpty)
     else if hasToBearOff then notifyObservers(Event.AllCheckersInTheHomeBoard)
