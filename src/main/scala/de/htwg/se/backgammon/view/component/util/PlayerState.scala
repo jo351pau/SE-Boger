@@ -3,7 +3,6 @@ package de.htwg.se.backgammon.view.component.util
 import scalafx.scene.Group
 import scalafx.scene.shape.Rectangle
 import scalafx.scene.paint.Color
-import de.htwg.se.backgammon.view.CustomColor
 import scalafx.scene.text.Text
 import scalafx.scene.text.Font
 import de.htwg.se.backgammon.model.Player
@@ -22,14 +21,12 @@ class PlayerState(parentWidth: Double, parentHeight: Double) extends Group {
   val xCoord =
     parentWidth - MARGIN_RIGHT - BOX_WIDTH
 
+  val yCoordWhite = parentHeight - MARGIN_TOP - BOX_WIDTH
+
   {
     val players = List(
       Entry(Player.Black, MARGIN_TOP, Color.rgb(188, 138, 95)),
-      Entry(
-        Player.White,
-        parentHeight - MARGIN_TOP - BOX_WIDTH,
-        Color.WHITESMOKE
-      )
+      Entry(Player.White, yCoordWhite, Color.WHITESMOKE)
     )
 
     players.foreach(entry => {

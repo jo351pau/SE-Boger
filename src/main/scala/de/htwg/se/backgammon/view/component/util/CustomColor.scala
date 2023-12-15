@@ -1,4 +1,4 @@
-package de.htwg.se.backgammon.view
+package de.htwg.se.backgammon.view.component.util
 
 import scalafx.scene.paint.Color
 

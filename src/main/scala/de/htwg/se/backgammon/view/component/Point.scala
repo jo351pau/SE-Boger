@@ -6,7 +6,6 @@ import de.htwg.se.backgammon.model.Field
 import de.htwg.se.backgammon.model.Player
 import scalafx.scene.effect.DropShadow
 import scalafx.Includes.jfxColor2sfx
-import de.htwg.se.backgammon.view.CustomColor
 import scalafx.scene.shape.Rectangle
 import scalafx.scene.shape.Polygon
 import scalafx.scene.layout.Pane

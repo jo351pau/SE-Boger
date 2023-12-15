@@ -1,7 +1,7 @@
 package de.htwg.se.backgammon.view
 
 import scala.util.Try
-import de.htwg.se.backgammon.controller.Controller
+import de.htwg.se.backgammon.controller.IController
 import de.htwg.se.backgammon.exception.MoveException
 import de.htwg.se.backgammon.model.Move
 import de.htwg.se.backgammon.model.BearInMove
@@ -20,7 +20,7 @@ import de.htwg.se.backgammon.model.BearOffMove
 import de.htwg.se.backgammon.model.Skip
 import de.htwg.se.backgammon.util.PrettyPrint.printGameOver
 
-class TUI(controller: Controller) extends Observer:
+class TUI(controller: IController) extends Observer:
   controller.add(this)
   var continue = true
   def run =
@@ -35,7 +35,7 @@ class TUI(controller: Controller) extends Observer:
       case Event.InvalidMove =>
         printErr(s"Not possible! ${ex.getOrElse(MoveException()).getMessage()}")
       case Event.PlayerChanged =>
-        println(s"${s"${controller.currentPlayer}".bold} it's your move!")
+        println(s"${s"${controller.currentPlayer}".bold} it's your turn!")
       case Event.DiceRolled =>
         println(
           s"You rolled the dice twice: ${controller.dice.toPrettyString}"

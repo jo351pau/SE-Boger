@@ -1,4 +1,4 @@
-package de.htwg.se.backgammon.controller
+package de.htwg.se.backgammon.controller.base
 
 import de.htwg.se.backgammon.util.Observable
 import de.htwg.se.backgammon.util.Event
@@ -18,12 +18,14 @@ import scala.util.Try
 import scala.util.Failure
 import scala.util.Success
 
-import strategy.ValidateMoveStrategy
+import de.htwg.se.backgammon.controller.strategy.ValidateMoveStrategy
 import de.htwg.se.backgammon.model.GameState
 import de.htwg.se.backgammon.model.NoMove
 import de.htwg.se.backgammon.exception.NoMoveException
+import de.htwg.se.backgammon.controller.IController
+import de.htwg.se.backgammon.controller.PutCommand
 
-case class Controller(private val model: Model) extends Observable {
+case class Controller(private val model: Model) extends IController {
   def this(game: Game) = this(Model(game))
 
   def game = model.game

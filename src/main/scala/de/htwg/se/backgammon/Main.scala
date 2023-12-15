@@ -1,6 +1,6 @@
 package de.htwg.se.backgammon
 
-import de.htwg.se.backgammon.controller.Controller
+import de.htwg.se.backgammon.controller.base.Controller
 import de.htwg.se.backgammon.view.TUI
 import de.htwg.se.backgammon.model.Model
 import de.htwg.se.backgammon.model.Game

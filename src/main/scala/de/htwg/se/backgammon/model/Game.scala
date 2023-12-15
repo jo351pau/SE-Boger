@@ -51,6 +51,8 @@ case class Game(fields: List[Field], barWhite: Int = 0, barBlack: Int = 0)
     Player.Black -> fields.filter(_.occupier == Player.Black).map(_.number).sum
   )
 
+  def bar = Map(Player.White -> barWhite, Player.Black -> barBlack)
+
   override def toString: String =
     s"$barWhite : ${fields.mkString(" ")} : $barBlack"
 

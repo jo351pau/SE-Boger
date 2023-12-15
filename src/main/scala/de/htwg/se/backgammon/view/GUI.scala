@@ -34,7 +34,6 @@ import scalafx.scene.layout.Pane
 import scalafx.scene.input.MouseEvent
 import scalafx.scene.shape.Circle
 import de.htwg.se.backgammon.view.component.Configuration
-import de.htwg.se.backgammon.controller.Controller
 import de.htwg.se.backgammon.view.component.Checker
 import de.htwg.se.backgammon.view.component.util.DraggedChecker
 import scalafx.application.HostServices
@@ -53,8 +52,10 @@ import scala.util.Random
 import scalafx.application.Platform
 import component.Dice
 import de.htwg.se.backgammon.util.PrettyPrint.PrintBold
+import de.htwg.se.backgammon.view.component.util.BOX_WIDTH
+import de.htwg.se.backgammon.controller.IController
 
-class GUI(controller: Controller) extends JFXApp3 with Observer {
+class GUI(controller: IController) extends JFXApp3 with Observer {
   controller.add(this)
 
   var pane: Pane = null
@@ -68,6 +69,9 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
 
   var dice: Dice = Dice()
 
+  var bars: Bars =
+    Bars.createDefault(playerState.xCoord - BOX_WIDTH, playerState.yCoordWhite)
+
   override def update(event: Event, exception: Option[Throwable]): Unit = {
     Platform.runLater(onEvent(event, exception))
   }
@@ -76,12 +80,9 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
     case Event.Move =>
       board.setGame(controller.game, Configuration.pointHeight)
       board.activateCheckers(controller.currentPlayer)
+      bars.setGame(controller.game)
 
-    case Event.PlayerChanged => {
-      playerState.set(controller.currentPlayer)
-      board.activateCheckers(controller.currentPlayer)
-      setTitle()
-    }
+    case Event.PlayerChanged => onPlayerChanged(controller.currentPlayer)
     case Event.DiceRolled => {
       dice.roll(controller.dice)
     }
@@ -90,8 +91,11 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
     case _ =>
   }
 
-  def setTitle() = stage.title =
-    s"Backgammon - ${controller.currentPlayer} it's your turn!"
+  def onPlayerChanged(current: Player) = {
+    playerState.set(current)
+    board.activateCheckers(current)
+    stage.title = s"Backgammon - $current it's your turn!"
+  }
 
   override def start(): Unit = {
     stage = new JFXApp3.PrimaryStage {
@@ -123,6 +127,7 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
           children = Seq(
             board,
             playerState,
+            bars,
             dice
           )
         }
@@ -136,18 +141,14 @@ class GUI(controller: Controller) extends JFXApp3 with Observer {
           if (draggedChecker.isDefined) then draggedChecker.move(event)
         }
 
-
         onShown = () => {
-          dice.roll(controller.dice)
+          dice.roll(controller.dice); onPlayerChanged(controller.currentPlayer)
         }
 
         content = pane
       }
     }
-    setTitle()
-    board.activateCheckers(controller.currentPlayer)
   }
-
 
   def doHovering(element: GUIElement): Boolean = element match {
     case point: Point     => draggedChecker.isDefined

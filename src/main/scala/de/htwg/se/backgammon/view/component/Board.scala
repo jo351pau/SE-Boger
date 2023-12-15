@@ -2,7 +2,6 @@ package de.htwg.se.backgammon.view.component
 
 import scalafx.scene.canvas.GraphicsContext
 import javax.swing.plaf.basic.BasicBorders.MarginBorder
-import de.htwg.se.backgammon.view.CustomColor
 import de.htwg.se.backgammon.model.Game
 import scalafx.scene.layout.Pane
 import scalafx.scene.shape.Rectangle
@@ -12,6 +11,7 @@ import de.htwg.se.backgammon.model.Player
 import javafx.scene.input.MouseEvent
 import de.htwg.se.backgammon.view.GUI
 import scalafx.scene.Group
+import de.htwg.se.backgammon.view.component.util.CustomColor
 
 class Board(
     val xCoord: Double,

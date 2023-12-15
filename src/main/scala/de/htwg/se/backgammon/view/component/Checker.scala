@@ -8,7 +8,6 @@ import scalafx.scene.effect.DropShadow
 import scalafx.scene.paint.Color
 import scalafx.scene.shape.Circle
 import javafx.scene.input.MouseEvent
-import de.htwg.se.backgammon.view.CustomColor
 import scalafx.Includes.jfxMouseEvent2sfx
 import scalafx.scene.Group
 import scala.collection.mutable.ListBuffer

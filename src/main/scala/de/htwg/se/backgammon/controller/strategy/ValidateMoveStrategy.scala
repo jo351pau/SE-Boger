@@ -10,10 +10,10 @@ import de.htwg.se.backgammon.exception.MoveException
 import de.htwg.se.backgammon.exception.NotYourFieldException
 import de.htwg.se.backgammon.exception.DieNotExistException
 import de.htwg.se.backgammon.validate.ValidateStrategy
-import de.htwg.se.backgammon.controller.Controller
 import scala.util.Try
 import de.htwg.se.backgammon.model.NoMove
 import de.htwg.se.backgammon.exception.NoMoveException
+import de.htwg.se.backgammon.controller.IController
 
 trait ValidateMoveStrategy(val game: Game, val move: Move, val dice: List[Int])
     extends ValidateStrategy {
@@ -44,7 +44,7 @@ class ValidateBearInMove(game: Game, move: Move, dice: List[Int])
     extends ValidateMoveStrategy(game, move, dice)
 
 object ValidateMoveStrategy {
-  def apply(c: Controller, move: Move): ValidateMoveStrategy =
+  def apply(c: IController, move: Move): ValidateMoveStrategy =
     move match {
       case _: BearInMove =>
         ValidateBearInMove(c.game, move, c.dice)
