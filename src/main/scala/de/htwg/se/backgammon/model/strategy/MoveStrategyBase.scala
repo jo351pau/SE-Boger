@@ -42,7 +42,9 @@ trait IMoveStrategy(var game: IGame) {
 
   def set(changes: Map[Int, IField]): IGame = {
     game = new Game(
-      List.tabulate(game.length)(i => changes.getOrElse(i, game(i)))
+      List.tabulate(game.length)(i => changes.getOrElse(i, game(i))),
+      barWhite = game.barWhite,
+      barBlack = game.barBlack
     ); game
   }
 
@@ -56,7 +58,9 @@ trait IMoveStrategy(var game: IGame) {
 
 abstract class MoveCheckersStrategy(game: IGame) extends IMoveStrategy(game) {
 
-  def execute(): IGame = placeCheckers; pickUpCheckers
+  def execute(): IGame = {
+    placeCheckers; pickUpCheckers
+  }
 
   def placeCheckers: IGame
 
