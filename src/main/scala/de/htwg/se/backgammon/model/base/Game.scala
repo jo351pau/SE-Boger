@@ -1,8 +1,8 @@
-package de.htwg.se.backgammon.model
+package de.htwg.se.backgammon.model.base
 
-import strategy.MoveStrategy
-import strategy.ValidateBearInMoveStrategy
-import strategy.DefaultValidateMoveStrategy
+import de.htwg.se.backgammon.model.strategy.MoveStrategy
+import de.htwg.se.backgammon.model.strategy.ValidateBearInMoveStrategy
+import de.htwg.se.backgammon.model.strategy.DefaultValidateMoveStrategy
 
 import scala.util.Random
 import scala.util.Try
@@ -11,6 +11,8 @@ import java.util.Map.Entry
 import scala.util.Failure
 import org.scalactic.Fail
 import de.htwg.se.backgammon.model.strategy.ValidateBearOffMoveStrategy
+import base.Field
+import de.htwg.se.backgammon.model.strategy.{DefaultValidateMoveStrategy, MoveStrategy, ValidateBearInMoveStrategy}
 
 case class Game(fields: List[Field], barWhite: Int = 0, barBlack: Int = 0)
     extends GameSeq(fields) {

@@ -1,4 +1,6 @@
-package de.htwg.se.backgammon.model
+package de.htwg.se.backgammon.model.base
+import base.Game
+import de.htwg.se.backgammon.model.IDice
 
 val MOVES_PER_ROUND = 2
 

@@ -1,4 +1,4 @@
-package de.htwg.se.backgammon.model
+package de.htwg.se.backgammon.model.base
 
 private val BAR_POSITION = 999
 
