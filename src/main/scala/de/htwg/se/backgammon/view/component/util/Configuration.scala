@@ -11,7 +11,21 @@ object Configuration {
 
   val pointHeight = (boardSize.height / 2) * 0.9
   val pointMargin = 5
+}
 
+class PlayerStateConfiguration {
+  val MARGIN_TOP = 25
+  val MARGIN_RIGHT = 25
+  val BOX_WIDTH = 50
+  val CORNER_RADIUS = 5
+}
+
+class BarConfiguration {
+  val PLAYER_STATE_CONFIGURATION = PlayerStateConfiguration()
+
+  val MARGIN_TOP = PLAYER_STATE_CONFIGURATION.MARGIN_TOP
+  val MARGIN_RIGHT = PLAYER_STATE_CONFIGURATION.MARGIN_RIGHT
+  val BOX_WIDTH = PLAYER_STATE_CONFIGURATION.BOX_WIDTH
 }
 
 case class BoardConfiguration(size: Size, x: Double, y: Double, lineWidht: Int)

@@ -9,6 +9,7 @@ import de.htwg.se.backgammon.model.CustomSetup
 import de.htwg.se.backgammon.model.Field
 import de.htwg.se.backgammon.model.Player
 import de.htwg.se.backgammon.model.Game
+import base.Controller
 
 class ControllerSpec extends AnyWordSpec {
   "Controller" should {

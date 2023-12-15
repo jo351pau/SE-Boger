@@ -28,8 +28,7 @@ import scalafx.scene.web.HTMLEditor
 import scalafx.scene.canvas.GraphicsContext
 import de.htwg.se.backgammon.view.component.Board
 import de.htwg.se.backgammon.view.component.Size
-import de.htwg.se.backgammon.model.DefaultSetup
-import de.htwg.se.backgammon.model.Game
+import de.htwg.se.backgammon.model.IGame
 import scalafx.scene.layout.Pane
 import scalafx.scene.input.MouseEvent
 import scalafx.scene.shape.Circle
@@ -41,11 +40,11 @@ import de.htwg.se.backgammon.view.component.*
 import de.htwg.se.backgammon.view.component.util.PlayerState
 import scalafx.scene.shape.DrawMode
 import de.htwg.se.backgammon.model.Player
-import de.htwg.se.backgammon.model.Move
+import de.htwg.se.backgammon.model.IMove
 import de.htwg.se.backgammon.controller.PutCommand
 import de.htwg.se.backgammon.util.Command
 import de.htwg.se.backgammon.exception.MoveException
-import de.htwg.se.backgammon.model.DefinedMove
+import de.htwg.se.backgammon.model.base.DefinedMove
 import scalafx.scene.PerspectiveCamera
 import scala.util.Try
 import scala.util.Random

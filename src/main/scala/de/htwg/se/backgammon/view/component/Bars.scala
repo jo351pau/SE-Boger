@@ -1,6 +1,6 @@
 package de.htwg.se.backgammon.view.component
 
-import de.htwg.se.backgammon.model.Game
+import de.htwg.se.backgammon.model.IGame
 import de.htwg.se.backgammon.view.component.util.MARGIN_TOP
 import de.htwg.se.backgammon.model.Player
 
@@ -9,7 +9,7 @@ class Bars(bars: Bar*) extends GUIList[Bar] {
     bars.foreach(add(_))
   }
 
-  def setGame(game: Game) = {
+  def setGame(game: IGame) = {
     asList.foreach(bar => bar.set(game.bar(bar.player)))
   }
 }

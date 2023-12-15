@@ -1,21 +1,22 @@
 package de.htwg.se.backgammon.controller.strategy
 
-import de.htwg.se.backgammon.model.Move
-import de.htwg.se.backgammon.model.BearInMove
+import de.htwg.se.backgammon.model.IMove
 import de.htwg.se.backgammon.model.Player
-import de.htwg.se.backgammon.model.Game
-import de.htwg.se.backgammon.model.Field
+import de.htwg.se.backgammon.model.IGame
+import de.htwg.se.backgammon.model.IField
 import de.htwg.se.backgammon.exception.FieldDoesNotExistException
 import de.htwg.se.backgammon.exception.MoveException
 import de.htwg.se.backgammon.exception.NotYourFieldException
 import de.htwg.se.backgammon.exception.DieNotExistException
 import de.htwg.se.backgammon.validate.ValidateStrategy
 import scala.util.Try
-import de.htwg.se.backgammon.model.NoMove
+import de.htwg.se.backgammon.model.base.Field
+import de.htwg.se.backgammon.model.base.NoMove
+import de.htwg.se.backgammon.model.base.BearInMove
 import de.htwg.se.backgammon.exception.NoMoveException
 import de.htwg.se.backgammon.controller.IController
 
-trait ValidateMoveStrategy(val game: Game, val move: Move, val dice: List[Int])
+trait ValidateMoveStrategy(val game: IGame, val move: IMove, val dice: List[Int])
     extends ValidateStrategy {
   override def validate() = {
     require(dice.contains(move.steps), DieNotExistException(move.steps, dice))
@@ -23,7 +24,7 @@ trait ValidateMoveStrategy(val game: Game, val move: Move, val dice: List[Int])
   }
 }
 
-class ValidateMove(game: Game, move: Move, player: Player, dice: List[Int])
+class ValidateMove(game: IGame, move: IMove, player: Player, dice: List[Int])
     extends ValidateMoveStrategy(game, move, dice) {
   val field = Try(game.get(move.from)).getOrElse(Field(Player.None))
 
@@ -40,11 +41,11 @@ class ValidateMove(game: Game, move: Move, player: Player, dice: List[Int])
   }
 }
 
-class ValidateBearInMove(game: Game, move: Move, dice: List[Int])
+class ValidateBearInMove(game: IGame, move: IMove, dice: List[Int])
     extends ValidateMoveStrategy(game, move, dice)
 
 object ValidateMoveStrategy {
-  def apply(c: IController, move: Move): ValidateMoveStrategy =
+  def apply(c: IController, move: IMove): ValidateMoveStrategy =
     move match {
       case _: BearInMove =>
         ValidateBearInMove(c.game, move, c.dice)

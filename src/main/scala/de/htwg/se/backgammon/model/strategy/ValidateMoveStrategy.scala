@@ -1,14 +1,14 @@
 package de.htwg.se.backgammon.model.strategy
 
 import de.htwg.se.backgammon.validate.ValidateStrategy
-import de.htwg.se.backgammon.model.Game
+import de.htwg.se.backgammon.model.IGame
 import de.htwg.se.backgammon.model.Player
 import de.htwg.se.backgammon.exception.FieldDoesNotExistException
 import de.htwg.se.backgammon.exception.AttackNotPossibleException
 import de.htwg.se.backgammon.exception.EmptyFieldException
 
 class ValidateBearInMoveStrategy(
-    val game: Game,
+    val game: IGame,
     val player: Player,
     val to: Int
 ) extends ValidateStrategy {
@@ -29,7 +29,7 @@ class ValidateBearInMoveStrategy(
 }
 
 class ValidateBearOffMoveStrategy(
-    val game: Game,
+    val game: IGame,
     val from: Int,
     val to: Int
 ) extends ValidateStrategy {
@@ -50,7 +50,7 @@ class ValidateBearOffMoveStrategy(
 }
 
 class DefaultValidateMoveStrategy(
-    val game: Game,
+    val game: IGame,
     val from: Int,
     val to: Int
 ) extends ValidateStrategy {

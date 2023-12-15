@@ -1,10 +1,8 @@
-package de.htwg.se.backgammon.model.base
-import base.Game
-import de.htwg.se.backgammon.model.IDice
+package de.htwg.se.backgammon.model
 
 val MOVES_PER_ROUND = 2
 
-class Model(private var _game: Game, var player: Player) {
+class Model(private var _game: IGame, var player: Player) extends IModel {
   def this(game: Game) = this(game, Player.White)
 
   def next = {
@@ -13,11 +11,11 @@ class Model(private var _game: Game, var player: Player) {
     movesThisRound = Nil; player
   }
 
-  var dice = Dice.roll(MOVES_PER_ROUND)
+  var dice = Dice().roll(MOVES_PER_ROUND)
 
   var previousGame = _game
 
-  def game_=(game: Game) = {
+  def game_=(game: IGame) = {
     previousGame = _game
     _game = game
     movesThisRound = movesThisRound.::(game)
@@ -25,5 +23,5 @@ class Model(private var _game: Game, var player: Player) {
 
   def game = _game
 
-  var movesThisRound: List[Game] = Nil
+  var movesThisRound: List[IGame] = Nil
 }

@@ -2,14 +2,14 @@ package de.htwg.se.backgammon.controller
 
 import de.htwg.se.backgammon.util.*
 import scala.util.Try
-import de.htwg.se.backgammon.model.Move
-import de.htwg.se.backgammon.model.Game
+import de.htwg.se.backgammon.model.IMove
+import de.htwg.se.backgammon.model.IGame
 import de.htwg.se.backgammon.model.GameState
 
-case class PutCommand(move: Move, private var _game: Game = null)
-    extends Command[Game, GameState]:
-  override def noStep(game: Game): Game = game
-  override def doStep(game: Game): Try[Game] =
+case class PutCommand(move: IMove, private var _game: IGame = null)
+    extends Command[IGame, GameState]:
+  override def noStep(game: IGame): IGame = game
+  override def doStep(game: IGame): Try[IGame] =
     _game = game; game.move(move)
   override def undoStep(): GameState = GameState(_game, move)
 
