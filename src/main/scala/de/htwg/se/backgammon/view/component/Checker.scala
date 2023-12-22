@@ -11,10 +11,12 @@ import scalafx.Includes.jfxMouseEvent2sfx
 import scalafx.scene.Group
 import scala.collection.mutable.ListBuffer
 import de.htwg.se.backgammon.view.GUI
+import de.htwg.se.backgammon.view.component.configuration.ColorPalette
 
 val CHECKER_RADIUS = 17
 
 class Checker(
+    val colors: ColorPalette,
     var player: Player,
     val xCoord: Double,
     val yCoord: Double,
@@ -27,8 +29,8 @@ class Checker(
     centerY = yCoord
     radius = CHECKER_RADIUS
     fill = player match {
-      case Player.White => Color.WHITESMOKE
-      case _            => Color.rgb(188, 138, 95)
+      case Player.White => colors.checkersWhite
+      case _            => colors.checkersBlack
     }
     effect = new DropShadow(3.0, Color.BLACK)
   }
@@ -64,6 +66,6 @@ class Checker(
   override def isDraggable = true
 
   override def clone(): Checker =
-    new Checker(player, xCoord, yCoord, activated, point)
+    new Checker(colors, player, xCoord, yCoord, activated, point)
 
 }

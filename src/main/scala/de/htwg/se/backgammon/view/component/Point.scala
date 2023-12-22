@@ -13,6 +13,7 @@ import scalafx.scene.layout.Pane
 import scalafx.Includes.eventClosureWrapperWithParam
 import javafx.scene.input.MouseEvent
 import scalafx.scene.Group
+import de.htwg.se.backgammon.view.component.configuration.ColorPalette
 
 val MARGIN_BOTTOM = 5
 val PADDING = 2
@@ -22,7 +23,8 @@ class Point(
     x: Array[Double],
     y: Array[Double],
     size: Size,
-    color: Color
+    color: Color,
+    colorPalette: ColorPalette
 ) extends Pane
     with GUIElement {
   private var field: IField = Field()
@@ -89,6 +91,7 @@ class Point(
   def createChecker(player: Player, postion: Int) = {
     checkers.add(
       Checker(
+        colorPalette,
         player,
         x(2),
         getCheckerY(postion),

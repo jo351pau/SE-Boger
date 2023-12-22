@@ -2,6 +2,7 @@ package de.htwg.se.backgammon.model
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers._
+import de.htwg.se.backgammon.model.base.Field
 
 class FieldSpec extends AnyWordSpec {
   "Field" should {

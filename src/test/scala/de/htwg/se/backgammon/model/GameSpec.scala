@@ -3,12 +3,19 @@ package de.htwg.se.backgammon.model
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers._
 import de.htwg.se.backgammon.exception.{NotYourFieldException, EmptyFieldException, AttackNotPossibleException, FieldDoesNotExistException, DieNotExistException, WrongDirectionException}
+import de.htwg.se.backgammon.model.base.Game
+import de.htwg.se.backgammon.model.base.Dice
+import de.htwg.se.backgammon.model.base.Field
+import de.htwg.se.backgammon.model.base.CustomSetup
+import de.htwg.se.backgammon.model.base.Move
+import de.htwg.se.backgammon.model.base.BearInMove
+import de.htwg.se.backgammon.model.base.DefaultSetup
 
 class GameSpec extends AnyWordSpec {
   "Game" should {
     "return value between between 1 and 6" in {
-      Dice.roll should be > 0
-      Dice.roll should be < 7
+      Dice().roll should be > 0
+      Dice().roll should be < 7
     }
     "have default layout '|5| |/| |/| |/| |-3| |/| |-5| |/| |/| |/| |/| |2| " +
       "|-2| |/| |/| |/| |/| |5| |/| |3| |/| |/| |/| |-5|' " in {
@@ -18,7 +25,7 @@ class GameSpec extends AnyWordSpec {
         )
       }
     "have default layout" in {
-      Game.create(DefaultSetup(24, 15)) should equal(
+      new Game(DefaultSetup(24, 15)) should equal(
         List(5, 0, 0, 0, -3, 0, -5, 0, 0, 0, 0, 2, -2, 0, 0, 0, 0, 5, 0, 3, 0,
           0, 0, -5).map(i => Field(i))
       )
@@ -43,7 +50,7 @@ class GameSpec extends AnyWordSpec {
       )
     }
     "attacking opponent, send checker to bar and back" in {
-      var game = new Game(CustomSetup(List(5, 0, 0, -2)))
+      var game: IGame = new Game(CustomSetup(List(5, 0, 0, -2)))
       game = game.move(Move(0, 1)).get.move(Move(3, 2)).get
       game.fields should equal(
         List(4, -1, 0, -1, 2, 0, 0, -5).map(i => Field(i))

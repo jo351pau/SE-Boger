@@ -2,15 +2,13 @@ package de.htwg.se.backgammon.view.component
 
 import scalafx.scene.Group
 import scala.util.Random
+import de.htwg.se.backgammon.view.component.configuration.BoardConfiguration
 
 class Dice extends GUIList[Die] {
-  def create(
-      dice: Int,
-      boardX: Double,
-      boardY: Double,
-      boardSize: Size
+  def create(dice: Int)(using
+      cf: BoardConfiguration
   ): Dice = {
-    set(List.tabulate(dice)(_ => create(boardX, boardY, boardSize))); this
+    set(List.tabulate(dice)(_ => create(cf.xCoord, cf.yCoord, cf.size))); this
   }
 
   private def create(boardX: Double, boardY: Double, boardSize: Size): Die = {

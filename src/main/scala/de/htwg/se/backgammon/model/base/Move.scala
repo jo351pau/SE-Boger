@@ -7,7 +7,20 @@ import de.htwg.se.backgammon.model.Input
 
 private val BAR_POSITION = 999
 
-case class Move(from: Int, steps: Int) extends Input with IMove{
+object Move {
+  def create(game: IGame, player: Player, from: Int, to: Int) = {
+    if (from == -1) {
+      val steps = player match {
+        case Player.White => to + 1
+        case _            => game.length - to
+      }
+      BearInMove(player, steps)
+    }
+    DefinedMove(player, from, to)
+  }
+}
+
+case class Move(from: Int, steps: Int) extends Input with IMove {
   def whereToGo(game: IGame) = game(from).occupier match {
     case Player.White => from + steps
     case _            => from - steps

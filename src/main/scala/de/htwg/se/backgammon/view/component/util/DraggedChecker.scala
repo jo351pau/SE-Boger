@@ -4,9 +4,11 @@ import de.htwg.se.backgammon.view.component.Checker
 import de.htwg.se.backgammon.model.Player
 import javafx.scene.input.MouseEvent
 import scalafx.scene.input.KeyCode.Play
+import de.htwg.se.backgammon.view.component.configuration.PrimaryColorPalette
 
 case class DraggedChecker(var original: Checker)
     extends Checker(
+      original.colors,
       original.player,
       original.xCoord,
       original.yCoord,
@@ -30,6 +32,6 @@ case class DraggedChecker(var original: Checker)
 object DraggedChecker {
   def empty =
     new DraggedChecker(
-      Checker(Player.None, 0, 0, false, null)
+      Checker(PrimaryColorPalette(), Player.None, 0, 0, false, null)
     )
 }

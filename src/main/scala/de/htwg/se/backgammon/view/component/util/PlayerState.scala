@@ -6,27 +6,21 @@ import scalafx.scene.paint.Color
 import scalafx.scene.text.Text
 import scalafx.scene.text.Font
 import de.htwg.se.backgammon.model.Player
+import de.htwg.se.backgammon.view.component.configuration.PlayerConfiguration
 
 val MARGIN_TOP = 25
 val MARGIN_RIGHT = 25
-val BOX_WIDTH = 50
+val PLAYER_BOX_WIDTH = 50
 val CORNER_RADIUS = 5
 
-class PlayerState(parentWidth: Double, parentHeight: Double) extends Group {
+class PlayerState(using cf: PlayerConfiguration) extends Group {
   case class Entry(player: Player, y: Double, color: Color)
   var emojis: Map[Player, Text] = Map()
 
-  val mid = parentWidth / 2 - BOX_WIDTH / 2
-
-  val xCoord =
-    parentWidth - MARGIN_RIGHT - BOX_WIDTH
-
-  val yCoordWhite = parentHeight - MARGIN_TOP - BOX_WIDTH
-
   {
     val players = List(
-      Entry(Player.Black, MARGIN_TOP, Color.rgb(188, 138, 95)),
-      Entry(Player.White, yCoordWhite, Color.WHITESMOKE)
+      Entry(Player.Black, cf.marginTop, cf.colors.checkersBlack),
+      Entry(Player.White, cf.yCoordWhite, cf.colors.checkersWhite)
     )
 
     players.foreach(entry => {
@@ -46,8 +40,8 @@ class PlayerState(parentWidth: Double, parentHeight: Double) extends Group {
     val emoji = new Text {
       text = "🎲"
       font = Font.font("Arial", 30)
-      x = xCoord + 10
-      y = _y + +BOX_WIDTH / 2 + 10
+      x = cf.xCoord + 10
+      y = _y + +PLAYER_BOX_WIDTH / 2 + 10
       smooth = true
     }
     children.add(emoji)
@@ -57,20 +51,20 @@ class PlayerState(parentWidth: Double, parentHeight: Double) extends Group {
   def create(_y: Double, color: Color) = {
     val rectangle = new Rectangle {
       fill = color
-      x = xCoord
+      x = cf.xCoord
       y = _y
-      width = BOX_WIDTH
-      height = BOX_WIDTH
+      width = PLAYER_BOX_WIDTH
+      height = PLAYER_BOX_WIDTH
       arcWidth = CORNER_RADIUS
       arcHeight = CORNER_RADIUS
     }
     val border = new Rectangle {
       stroke = CustomColor.c1
       fill = null
-      x = xCoord
+      x = cf.xCoord
       y = _y
-      width = BOX_WIDTH
-      height = BOX_WIDTH
+      width = PLAYER_BOX_WIDTH
+      height = PLAYER_BOX_WIDTH
       arcWidth = CORNER_RADIUS
       arcHeight = CORNER_RADIUS
     }

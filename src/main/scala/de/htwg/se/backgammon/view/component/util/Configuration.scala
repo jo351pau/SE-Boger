@@ -3,7 +3,7 @@ package de.htwg.se.backgammon.view.component
 object Configuration {
   val frameSize = Size(900, 700)
 
-  val board = BoardConfiguration(boardSize, boardX, boardY, boardLineWidth)
+  //val board = BoardConfiguration(boardSize, boardX, boardY, boardLineWidth)
   val boardSize = Size(800, 500)
   val boardX = (frameSize.width - boardSize.width) / 2
   val boardY = (frameSize.height - boardSize.height) / 2
@@ -27,5 +27,3 @@ class BarConfiguration {
   val MARGIN_RIGHT = PLAYER_STATE_CONFIGURATION.MARGIN_RIGHT
   val BOX_WIDTH = PLAYER_STATE_CONFIGURATION.BOX_WIDTH
 }
-
-case class BoardConfiguration(size: Size, x: Double, y: Double, lineWidht: Int)

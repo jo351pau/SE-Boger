@@ -12,14 +12,13 @@ import javafx.scene.input.MouseEvent
 import de.htwg.se.backgammon.view.GUI
 import scalafx.scene.Group
 import de.htwg.se.backgammon.view.component.util.CustomColor
+import de.htwg.se.backgammon.view.component.configuration.BoardConfiguration
+import de.htwg.se.backgammon.view.component.configuration.ColorPalette
+import de.htwg.se.backgammon.view.component.configuration.PointConfiguration
 
-class Board(
-    val xCoord: Double,
-    val yCoord: Double,
-    val size: Size,
-    lineWidth: Int
-) extends Pane {
-  def this(cf: BoardConfiguration) = this(cf.x, cf.y, cf.size, cf.lineWidht)
+class Board(using conf: BoardConfiguration) extends Pane {
+  val (size, xCoord, yCoord, lineWidth, colors) =
+    (conf.size, conf.xCoord, conf.yCoord, conf.lineWidth, conf.colors)
 
   var points: GUIList[Point] = GUIList()
 
@@ -39,9 +38,9 @@ class Board(
 
   def indexOf(p: Point) = points.indexOf(p)
 
-  def setGame(game: IGame, pointHeight: Double) = {
+  def setGame(game: IGame)(using pointCf: PointConfiguration) = {
     if (game.length != points.length) {
-      points.set(Board.createPoints(this, game.length, pointHeight))
+      points.set(Board.createPoints(this, game.length, pointCf.height))
     }
     game.fields.zipWithIndex
       .map { case (v, i) => (i, v) }
@@ -54,7 +53,7 @@ class Board(
       height = size.height
       x = xCoord
       y = yCoord
-      fill = CustomColor.c5
+      fill = colors.boardBackground
       mouseTransparent = true
     }
   }
@@ -80,7 +79,7 @@ class Board(
       ).map(s => {
         s.fill = null
         s.mouseTransparent = true
-        s.stroke = CustomColor.c4
+        s.stroke = colors.boardGrid
         s.strokeWidth = lineWidth; s
       })
     }
@@ -97,11 +96,11 @@ object Board {
   def determineWidth(width: Double, pointsPerSide: Int): Double =
     (width - totalMargin(pointsPerSide)) / pointsPerSide
 
-  def color(side: Int, position: Int) = {
+  def color(side: Int, position: Int, colors: ColorPalette) = {
     if (side == 1) {
-      if (position % 2 == 0) then CustomColor.c2 else CustomColor.c3
-    } else if (position % 2 == 0) then CustomColor.c3
-    else CustomColor.c2
+      if (position % 2 == 0) then colors.field else colors.field_1
+    } else if (position % 2 == 0) then colors.field_1
+    else colors.field
   }
 
   def createXArray(boardX: Double, position: Int, width: Double) = {
@@ -132,7 +131,8 @@ object Board {
           createXArray(xCoord, index, width).map(_ + margin(index)),
           if side == 1 then topSideY else bottomSideY,
           size = Size(width, height),
-          color(side, index)
+          color(side, index, board.colors),
+          board.colors
         )
       )
     }.toList

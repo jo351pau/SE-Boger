@@ -2,6 +2,8 @@ package de.htwg.se.backgammon.model
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers._
+import de.htwg.se.backgammon.model.base.Game
+import de.htwg.se.backgammon.model.base.Model
 
 class ModelSpec extends AnyWordSpec {
   "Model" should {
@@ -20,11 +22,11 @@ class ModelSpec extends AnyWordSpec {
     }
     "White player starts by default" in {
       val game = new Game(24, 15)
-      val m = Model(game)
+      val m = model
       m.player shouldBe Player.White
       m.player.toLowerCase shouldBe "white"
       m.game shouldBe game
     }
   }
-  private def model = Model(new Game(24, 15), Player.White)
+  private def model = Model(new Game(24, 15), Player.White, DiceStub(1, 2))
 }

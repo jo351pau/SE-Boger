@@ -51,36 +51,31 @@ import scala.util.Random
 import scalafx.application.Platform
 import component.Dice
 import de.htwg.se.backgammon.util.PrettyPrint.PrintBold
-import de.htwg.se.backgammon.view.component.util.BOX_WIDTH
+import de.htwg.se.backgammon.view.component.util.PLAYER_BOX_WIDTH
 import de.htwg.se.backgammon.controller.IController
+import de.htwg.se.backgammon.model.base.Game
+import de.htwg.se.backgammon.model.base.Move
+import de.htwg.se.backgammon.view.component.configuration.Default.{given}
 
 class GUI(controller: IController) extends JFXApp3 with Observer {
   controller.add(this)
 
   var pane: Pane = null
-  var board: Board = null
   var draggedChecker: DraggedChecker = DraggedChecker.empty
 
-  val playerState: PlayerState = PlayerState(
-    Configuration.frameSize.width,
-    Configuration.frameSize.height
-  )
-
-  var dice: Dice = Dice()
+  val board: Board = Board()
+  val playerState: PlayerState = PlayerState()
+  val dice: Dice = Dice()
 
   var bars: Bars =
-    Bars.createDefault(playerState.xCoord - BOX_WIDTH, playerState.yCoordWhite)
+    Bars.createDefault(0- 25, 0)
 
   override def update(event: Event, exception: Option[Throwable]): Unit = {
     Platform.runLater(onEvent(event, exception))
   }
 
   def onEvent(event: Event, exception: Option[Throwable]) = event match {
-    case Event.Move =>
-      board.setGame(controller.game, Configuration.pointHeight)
-      board.activateCheckers(controller.currentPlayer)
-      bars.setGame(controller.game)
-
+    case Event.Move          => onMove(controller.game)
     case Event.PlayerChanged => onPlayerChanged(controller.currentPlayer)
     case Event.DiceRolled => {
       dice.roll(controller.dice)
@@ -88,6 +83,10 @@ class GUI(controller: IController) extends JFXApp3 with Observer {
     case Event.InvalidMove =>
       println(exception.getOrElse(MoveException()).getMessage())
     case _ =>
+  }
+
+  def onMove(game: IGame) = {
+    board.setGame(game); bars.setGame(game)
   }
 
   def onPlayerChanged(current: Player) = {
@@ -100,28 +99,12 @@ class GUI(controller: IController) extends JFXApp3 with Observer {
     stage = new JFXApp3.PrimaryStage {
       title = "Backgammon"
       scene = new Scene(
-        Configuration.frameSize.width,
-        Configuration.frameSize.height
+        given_FrameConfiguration.width,
+        given_FrameConfiguration.height
       ) {
-        val canvas = new Canvas {
-          width = Configuration.frameSize.width
-          height = Configuration.frameSize.height
-          mouseTransparent = true
-        }
         pane = new Pane {
-          board = new Board(
-            Configuration.boardX,
-            Configuration.boardY,
-            Configuration.boardSize,
-            4
-          )
-          board.setGame(controller.game, Configuration.pointHeight)
-          dice.create(
-            2,
-            Configuration.boardX,
-            Configuration.boardY,
-            Configuration.boardSize
-          )
+          board.setGame(controller.game)
+          dice.create(2)
 
           children = Seq(
             board,
@@ -133,10 +116,13 @@ class GUI(controller: IController) extends JFXApp3 with Observer {
 
         onMouseClicked = (event: MouseEvent) => {
           board.handleMouseEvent(event, onClicked = onBoardClicked)
+          bars.handleMouseEvent(event, onClicked = onBoardClicked)
         }
 
         onMouseMoved = (event: MouseEvent) => {
           board.handleMouseEvent(event, doHovering = doHovering)
+          bars.handleMouseEvent(event, doHovering = doHovering)
+
           if (draggedChecker.isDefined) then draggedChecker.move(event)
         }
 
@@ -162,7 +148,7 @@ class GUI(controller: IController) extends JFXApp3 with Observer {
 
       controller.doAndPublish(
         controller.put,
-        DefinedMove(controller.currentPlayer, from, to)
+        Move.create(controller.game, controller.currentPlayer, from, to)
       )
 
       pane.children.remove(this.draggedChecker)
