@@ -21,12 +21,13 @@ import de.htwg.se.backgammon.model.storage.JsonStorage
 import de.htwg.se.backgammon.model.IGame
 import de.htwg.se.backgammon.model.storage.Storage
 import de.htwg.se.backgammon.model.storage.JsonStorage.{given}
+import de.htwg.se.backgammon.model.IModel
 
 private val NUMBER_OF_FIELDS = 24
 private val NUMBER_OF_FIGURES = 15
 
 object Main {
-  val controller: Controller = configurate();
+  val controller: Controller = configurate()
   val tui: TUI = new TUI(controller)
   val gui: GUI = new GUI(controller)
 
@@ -40,17 +41,14 @@ object Main {
   }
 
   def configurate()(using storage: Storage): Controller = {
-    val model = new Model(
-      storage.load[IGame]("game") match {
-        case Success(game: Game) => game
-        case _ => new Game(DefaultSetup(NUMBER_OF_FIELDS, NUMBER_OF_FIGURES))
-      },
-      Dice()
-    )
+    val model: Model = storage.load[IModel]("data") match {
+        case Success(obj: Model) => obj
+        case _ => new Model(new Game(DefaultSetup(NUMBER_OF_FIELDS, NUMBER_OF_FIGURES)), new Dice())
+      }
     val controller = Controller(model)
     controller.add(new Observer {
       override def update(e: Event, exception: Option[Throwable]): Unit =
-        if e == Event.Move then storage.save(controller.data, "game")
+        if e == Event.Move then storage.save(controller.data, "data")
     }); controller
   }
 }

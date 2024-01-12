@@ -16,18 +16,19 @@ val MOVES_PER_ROUND = 2
 case class Model(
     private var _game: IGame,
     var player: Player,
-    val diceStrategy: IDice
+    val diceStrategy: IDice = new Dice(),
+    var dice: List[Int] = List()
 ) extends IModel {
   def this(game: Game, diceStrategy: IDice) =
     this(game, Player.White, diceStrategy)
+
+  if (dice.isEmpty) dice = diceStrategy.roll(MOVES_PER_ROUND)
 
   def next = {
     if player == Player.White then player = Player.Black
     else player = Player.White
     movesThisRound = Nil; player
   }
-
-  var dice = diceStrategy.roll(MOVES_PER_ROUND)
 
   def roll = { dice = diceStrategy.roll(MOVES_PER_ROUND); dice }
 
@@ -43,7 +44,7 @@ case class Model(
 
   var movesThisRound: List[IGame] = Nil
 
-  def clone() = {
+  override def clone() = {
     var model = new Model(game, player, diceStrategy)
     model.dice = dice; model
   }
@@ -54,7 +55,6 @@ object Model {
 
   implicit val modelReads: Reads[Model] = Json.reads[Model]
   implicit val modelWrites: Writes[Model] = Json.writes[Model]
-
   def fromJson(json: JsValue) = {
     json.asOpt[Model] match
       case Some(model: Model) => model
@@ -64,7 +64,7 @@ object Model {
         )
   }
 
-  def fromXml(xml: Node) : Model = {
+  def fromXml(xml: Node): Model = {
     val game = Game.fromXml((xml \ "game")(0))
     val player = Player.withName((xml \ "current").text)
     val dice =

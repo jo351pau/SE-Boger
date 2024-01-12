@@ -30,7 +30,7 @@ trait IGame extends IndexedSeq[IField] with Storable {
 
   def !=(that: IGame): Boolean
 
-  def asXml = {
+  override def asXml = {
     <game> 
         <barWhite>{barWhite}</barWhite>
         <barBlack>{barBlack}</barBlack>

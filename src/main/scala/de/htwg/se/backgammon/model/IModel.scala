@@ -21,15 +21,13 @@ trait IModel extends Storable {
 
   def player: Player
 
-  def clone(): IModel
-
   override def asXml: Elem = {
     <data> 
         <current>{player}</current>
         <dice>
             {dice.map(value => <die>{value}</die>)}
         </dice>
-        <game>{game.asXml}</game>
+        {game.asXml}
     </data>
   }
 }

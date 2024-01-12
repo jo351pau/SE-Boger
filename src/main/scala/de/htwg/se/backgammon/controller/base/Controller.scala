@@ -121,5 +121,5 @@ case class Controller(private val model: IModel) extends IController {
       case _ => true
     }
 
-  def data = model.clone()
+  def data = model
 }

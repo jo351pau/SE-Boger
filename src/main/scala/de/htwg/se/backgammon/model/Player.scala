@@ -3,6 +3,9 @@ package de.htwg.se.backgammon.model
 import play.api.libs.json.Json
 import play.api.libs.json.Reads
 import play.api.libs.json.Writes
+import play.api.libs.json.Format
+import play.api.libs.json.JsValue
+import play.api.libs.json.JsString
 
 enum Player {
   case White
@@ -20,14 +23,14 @@ enum Player {
 
 object Player {
 
-  implicit val playerReads: Reads[Player] = Json.reads[Player]
-  implicit val playerWrites: play.api.libs.json.Writes[Player] =
-    Json.writes[Player]
+  implicit val playerReads: Reads[Player] = (json: JsValue) =>
+    json.validate[String].map(value => Player.withName(value))
+
+  implicit val playerWrites: Writes[Player] = Writes(obj => JsString(obj.toString()))
 
   def withName(name: String): Player = name match {
     case white if name == "White" => White
     case black if name == "Black" => Black
     case _                        => None
-  }
-
+  } 
 }

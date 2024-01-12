@@ -39,7 +39,7 @@ object Parser {
     )
     register[IModel](
       new Parser(
-        fromXml = null,
+        fromXml = Model.fromXml,
         fromJson = Model.fromJson,
         toJson = (model: Storable) => {
           Json.toJson(model.asInstanceOf[Model])

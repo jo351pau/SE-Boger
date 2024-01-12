@@ -75,7 +75,8 @@ object PrettyPrint {
     def toPrettyString = s"(${original.zipWithIndex
         .map { case (value, index) => s"${bold(value.toString)}" }
         .mkString(", ")}) ${
-        if (original(0) == original(1)) s"${bold("DOUBLE")}" else ""
+        if (original.length > 1 && original(0) == original(1)) s"${bold("DOUBLE")}"
+        else ""
       }"
   }
 

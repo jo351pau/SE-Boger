@@ -77,6 +77,7 @@ class ControllerSpec extends AnyWordSpec {
   private def m = {
     Model(
       new Game(CustomSetup(List(2, 0, 0, -1))),
+      Player.White,
       DiceStub(1, 2, 5, 5, 3, 2, 3, 2, 4, 4, 1, 2, 3, 5)
     )
   }
