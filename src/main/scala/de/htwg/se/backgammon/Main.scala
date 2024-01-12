@@ -20,7 +20,7 @@ import scala.util.Failure
 import de.htwg.se.backgammon.model.storage.JsonStorage
 import de.htwg.se.backgammon.model.IGame
 import de.htwg.se.backgammon.model.storage.Storage
-import de.htwg.se.backgammon.model.storage.JsonStorage.{given}
+import de.htwg.se.backgammon.model.storage.XmlStorage.{given}
 import de.htwg.se.backgammon.model.IModel
 
 private val NUMBER_OF_FIELDS = 24
@@ -48,7 +48,9 @@ object Main {
     val controller = Controller(model)
     controller.add(new Observer {
       override def update(e: Event, exception: Option[Throwable]): Unit =
-        if e == Event.Move then storage.save(controller.data, "data")
+        if e == Event.Move ||
+         e == Event.DiceRolled ||
+        e == Event.PlayerChanged then storage.save(controller.data, "data")
     }); controller
   }
 }

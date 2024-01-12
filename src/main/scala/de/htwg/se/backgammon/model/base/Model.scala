@@ -70,7 +70,6 @@ object Model {
     val dice =
       (xml \ "dice" \ "die").map(node => node.text.toInt).toList
 
-    var model = new Model(game, player, new Dice())
-    model.dice = dice; model
+    new Model(game, player, new Dice(), dice)
   }
 }
