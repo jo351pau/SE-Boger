@@ -6,6 +6,7 @@ import de.htwg.se.backgammon.model.Player
 import de.htwg.se.backgammon.model.IGame
 import de.htwg.se.backgammon.model.IMove
 import scala.util.Try
+import de.htwg.se.backgammon.model.IModel
 
 trait IController extends Observable {
   def game: IGame
@@ -25,4 +26,5 @@ trait IController extends Observable {
   def undo: Option[GameState]
   def quit: Unit
 
+  def data: IModel
 }

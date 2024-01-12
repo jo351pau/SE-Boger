@@ -120,4 +120,6 @@ case class Controller(private val model: IModel) extends IController {
         notifyObservers(Event.InvalidMove, Some(ex)); false
       case _ => true
     }
+
+  def data = model.clone()
 }

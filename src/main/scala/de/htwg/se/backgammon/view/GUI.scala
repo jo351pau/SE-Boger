@@ -51,7 +51,6 @@ import scala.util.Random
 import scalafx.application.Platform
 import component.Dice
 import de.htwg.se.backgammon.util.PrettyPrint.PrintBold
-import de.htwg.se.backgammon.view.component.util.PLAYER_BOX_WIDTH
 import de.htwg.se.backgammon.controller.IController
 import de.htwg.se.backgammon.model.base.Game
 import de.htwg.se.backgammon.model.base.Move
@@ -68,7 +67,7 @@ class GUI(controller: IController) extends JFXApp3 with Observer {
   val dice: Dice = Dice()
 
   var bars: Bars =
-    Bars.createDefault(0- 25, 0)
+    Bars.createDefault(0 - 25, 0)
 
   override def update(event: Event, exception: Option[Throwable]): Unit = {
     Platform.runLater(onEvent(event, exception))
@@ -77,9 +76,7 @@ class GUI(controller: IController) extends JFXApp3 with Observer {
   def onEvent(event: Event, exception: Option[Throwable]) = event match {
     case Event.Move          => onMove(controller.game)
     case Event.PlayerChanged => onPlayerChanged(controller.currentPlayer)
-    case Event.DiceRolled => {
-      dice.roll(controller.dice)
-    }
+    case Event.DiceRolled    => dice.roll(controller.dice)
     case Event.InvalidMove =>
       println(exception.getOrElse(MoveException()).getMessage())
     case _ =>

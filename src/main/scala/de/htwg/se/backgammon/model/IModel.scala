@@ -1,6 +1,9 @@
 package de.htwg.se.backgammon.model
 
-trait IModel {
+import scala.xml.Elem
+import de.htwg.se.backgammon.model.storage.Storable
+
+trait IModel extends Storable {
 
   def next: Player
 
@@ -17,4 +20,16 @@ trait IModel {
   def previousGame: IGame
 
   def player: Player
+
+  def clone(): IModel
+
+  override def asXml: Elem = {
+    <data> 
+        <current>{player}</current>
+        <dice>
+            {dice.map(value => <die>{value}</die>)}
+        </dice>
+        <game>{game.asXml}</game>
+    </data>
+  }
 }
