@@ -66,8 +66,7 @@ class GUI(controller: IController) extends JFXApp3 with Observer {
   val playerState: PlayerState = PlayerState()
   val dice: Dice = Dice()
 
-  var bars: Bars =
-    Bars.createDefault(0 - 25, 0)
+  val bars: Bars = Bars.createDefault()
 
   override def update(event: Event, exception: Option[Throwable]): Unit = {
     Platform.runLater(onEvent(event, exception))
@@ -79,11 +78,13 @@ class GUI(controller: IController) extends JFXApp3 with Observer {
     case Event.DiceRolled    => dice.roll(controller.dice)
     case Event.InvalidMove =>
       println(exception.getOrElse(MoveException()).getMessage())
+      draggedChecker.reset()
     case _ =>
   }
 
   def onMove(game: IGame) = {
     board.setGame(game); bars.setGame(game)
+    draggedChecker.reset()
   }
 
   def onPlayerChanged(current: Player) = {
@@ -95,6 +96,7 @@ class GUI(controller: IController) extends JFXApp3 with Observer {
   override def start(): Unit = {
     stage = new JFXApp3.PrimaryStage {
       title = "Backgammon"
+      resizable = false
       scene = new Scene(
         given_FrameConfiguration.width,
         given_FrameConfiguration.height
@@ -124,7 +126,9 @@ class GUI(controller: IController) extends JFXApp3 with Observer {
         }
 
         onShown = () => {
-          dice.roll(controller.dice); onPlayerChanged(controller.currentPlayer)
+          dice.roll(controller.dice)
+          bars.setGame(controller.game)
+          onPlayerChanged(controller.currentPlayer)
         }
 
         content = pane
@@ -149,7 +153,6 @@ class GUI(controller: IController) extends JFXApp3 with Observer {
       )
 
       pane.children.remove(this.draggedChecker)
-      draggedChecker.reset()
     }
     case checker: Checker
         if draggedChecker.isEmpty

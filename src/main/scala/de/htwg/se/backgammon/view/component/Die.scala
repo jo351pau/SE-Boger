@@ -81,11 +81,11 @@ class Die(
     rotate = Random.between(-25, 25)
   }
 
-  def overlaps(die: Die): BooleanBinding = {
-    x < (die.x + die.fitWidth) &&
+  def overlaps(die: Die): Boolean = {
+    (x < (die.x + die.fitWidth) &&
     (x + fitWidth) > die.x &&
     y < (die.y + die.fitHeight) &&
-    (y + fitHeight) > die.y
+    (y + fitHeight) > die.y).get()
   }
 
   private def getImageByDots(dots: Int) = new Image(

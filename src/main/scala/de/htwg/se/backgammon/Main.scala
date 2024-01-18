@@ -41,16 +41,23 @@ object Main {
   }
 
   def configurate()(using storage: Storage): Controller = {
+    def changed(e: Event): Boolean = e match {
+      case Event.Move | Event.DiceRolled | Event.PlayerChanged => true
+      case _                                                   => false
+    }
+
     val model: Model = storage.load[IModel]("data") match {
-        case Success(obj: Model) => obj
-        case _ => new Model(new Game(DefaultSetup(NUMBER_OF_FIELDS, NUMBER_OF_FIGURES)), new Dice())
-      }
+      case Success(obj: Model) => obj
+      case _ =>
+        new Model(
+          new Game(DefaultSetup(NUMBER_OF_FIELDS, NUMBER_OF_FIGURES)),
+          new Dice()
+        )
+    }
     val controller = Controller(model)
     controller.add(new Observer {
       override def update(e: Event, exception: Option[Throwable]): Unit =
-        if e == Event.Move ||
-         e == Event.DiceRolled ||
-        e == Event.PlayerChanged then storage.save(controller.data, "data")
+        if changed(e) then storage.save(controller.data, "data")
     }); controller
   }
 }

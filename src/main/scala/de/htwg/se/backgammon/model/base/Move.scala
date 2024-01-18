@@ -15,8 +15,9 @@ object Move {
         case _            => game.length - to
       }
       BearInMove(player, steps)
+    } else {
+      DefinedMove(player, from, to)
     }
-    DefinedMove(player, from, to)
   }
 }
 

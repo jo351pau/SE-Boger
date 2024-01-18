@@ -7,6 +7,7 @@ import de.htwg.se.backgammon.model.IField
 import de.htwg.se.backgammon.exception.FieldDoesNotExistException
 import de.htwg.se.backgammon.exception.MoveException
 import de.htwg.se.backgammon.exception.NotYourFieldException
+import de.htwg.se.backgammon.exception.BarIsNotEmptyException
 import de.htwg.se.backgammon.exception.DieNotExistException
 import de.htwg.se.backgammon.validate.ValidateStrategy
 import scala.util.Try
@@ -16,8 +17,11 @@ import de.htwg.se.backgammon.model.base.BearInMove
 import de.htwg.se.backgammon.exception.NoMoveException
 import de.htwg.se.backgammon.controller.IController
 
-trait ValidateMoveStrategy(val game: IGame, val move: IMove, val dice: List[Int])
-    extends ValidateStrategy {
+trait ValidateMoveStrategy(
+    val game: IGame,
+    val move: IMove,
+    val dice: List[Int]
+) extends ValidateStrategy {
   override def validate() = {
     require(dice.contains(move.steps), DieNotExistException(move.steps, dice))
     require(!move.isInstanceOf[NoMove], NoMoveException())
@@ -30,6 +34,7 @@ class ValidateMove(game: IGame, move: IMove, player: Player, dice: List[Int])
 
   override def validate() = {
     super.validate()
+    require(game.bar(player) == 0, BarIsNotEmptyException())
     require(
       (field.occupier == player),
       NotYourFieldException(move.from, player, field.occupier)

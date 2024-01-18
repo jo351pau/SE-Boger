@@ -69,7 +69,7 @@ case class Controller(private val model: IModel) extends IController {
     this used steps
     this.game = game
     if (model.dice.isEmpty) {
-      nextTurn()
+      if !model.doublets then nextTurn()
       roll()
     }
     if (game.winner.isDefined) then notifyObservers(Event.GameOver)

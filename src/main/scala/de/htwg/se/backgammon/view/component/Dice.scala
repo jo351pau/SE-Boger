@@ -20,15 +20,15 @@ class Dice extends GUIList[Die] {
       if (dots.length > index) {
         die.visible = true
         die.roll(dots(index))
+        preventOverlaps(die, asList.patch(index, Nil, 1))
       } else { die.visible = false }
     })
   }
 
-  private def randomizePosition(die: Die, shouldNotOverlapsWith: List[Die]) = {
-    die.randomizePosition
-    while (
-      shouldNotOverlapsWith.find(other => other.overlaps(die).get()).isDefined
-    ) {
+  private def preventOverlaps(die: Die, shouldNotOverlapsWith: List[Die]) = {
+    def isOverlapping =
+      shouldNotOverlapsWith.find(other => other.overlaps(die)).isDefined
+    while (isOverlapping) {
       die.randomizePosition
     }
   }

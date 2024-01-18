@@ -14,6 +14,10 @@ case class EmptyFieldException(val position: Int) extends MoveException {
   override def getMessage() = s"Field $position is empty!"
 }
 
+case class BarIsNotEmptyException() extends MoveException {
+  override def getMessage() = s"You can only bear in!"
+}
+
 case class AttackNotPossibleException(from: Int, to: Int, pieces: Int)
     extends MoveException {
   override def getMessage() =

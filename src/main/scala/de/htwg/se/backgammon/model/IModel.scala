@@ -7,6 +7,8 @@ trait IModel extends Storable {
 
   def next: Player
 
+  def doublets: Boolean
+
   var dice: List[Int]
 
   def roll: List[Int]
@@ -27,6 +29,7 @@ trait IModel extends Storable {
         <dice>
             {dice.map(value => <die>{value}</die>)}
         </dice>
+        <doublets>{doublets}</doublets>
         {game.asXml}
     </data>
   }

@@ -17,12 +17,13 @@ case class Model(
     private var _game: IGame,
     var player: Player,
     val diceStrategy: IDice = new Dice(),
-    var dice: List[Int] = List()
+    var dice: List[Int] = List(),
+    var doublets: Boolean = false
 ) extends IModel {
   def this(game: Game, diceStrategy: IDice) =
     this(game, Player.White, diceStrategy)
 
-  if (dice.isEmpty) dice = diceStrategy.roll(MOVES_PER_ROUND)
+  if (dice.isEmpty) roll
 
   def next = {
     if player == Player.White then player = Player.Black
@@ -30,7 +31,15 @@ case class Model(
     movesThisRound = Nil; player
   }
 
-  def roll = { dice = diceStrategy.roll(MOVES_PER_ROUND); dice }
+  def roll = {
+    dice = diceStrategy.roll(MOVES_PER_ROUND)
+    doublets = dice match {
+      case Nil                       => false
+      case dice if dice.length < 2 => false
+      case x :: xs                   => xs.forall(_ == x)
+    }
+    dice
+  }
 
   var previousGame = _game
 
@@ -69,7 +78,9 @@ object Model {
     val player = Player.withName((xml \ "current").text)
     val dice =
       (xml \ "dice" \ "die").map(node => node.text.toInt).toList
+    val doublets = (xml \ "doublets").text.toBoolean
 
-    new Model(game, player, new Dice(), dice)
+    val model = new Model(game, player, new Dice(), dice)
+    model.doublets = doublets; model
   }
 }

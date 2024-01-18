@@ -21,7 +21,7 @@ case class Bar(
   private val background = Background()
 
   {
-    children = Seq(background, checkers)
+    children = Seq(checkers)
   }
 
   def createChecker(position: Int) = {
@@ -44,7 +44,6 @@ case class Bar(
     if (checkers > 0) {
       (0 to checkers - 1).foreach(position => createChecker(position))
     }
-    background.update
   }
 
   def handleMouseEvent(

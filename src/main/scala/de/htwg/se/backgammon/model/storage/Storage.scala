@@ -29,9 +29,9 @@ trait Storage {
     Using(PrintWriter(File(s"$path.$fileExtension"))) { pw =>
       pw.write(parse(obj, Parser.get(clazz)))
     }.fold(
-      ex => println(s"Error writing to file: ${ex.getMessage}"),
+      ex => println(s"Error writing to file: ${ex.getMessage}!"),
       _ =>
-        println(s"Data (${obj.getClass().getSimpleName()}) saved successfully")
+        println(s"Data (${obj.getClass().getSimpleName()}) saved successfully.")
     )
   }
 

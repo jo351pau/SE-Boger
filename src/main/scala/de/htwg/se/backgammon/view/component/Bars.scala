@@ -6,6 +6,9 @@ import de.htwg.se.backgammon.model.Player
 import de.htwg.se.backgammon.view.component.util.PLAYER_BOX_WIDTH
 import scalafx.scene.input.MouseEvent
 import de.htwg.se.backgammon.view.component.configuration.ColorPalette
+import de.htwg.se.backgammon.view.component.configuration.FrameConfiguration
+
+val MARGIN_RIGHT = 25
 
 class Bars(bars: Bar*) extends GUIList[Bar] {
   {
@@ -24,10 +27,12 @@ class Bars(bars: Bar*) extends GUIList[Bar] {
 }
 
 object Bars {
-  def createDefault(x: Double, y2: Double)(using colors: ColorPalette) = {
+  def createDefault()(using frame: FrameConfiguration) = {
+    val y = MARGIN_TOP + PLAYER_BOX_WIDTH / 2
+    val x = frame.width - PLAYER_BOX_WIDTH - CHECKER_SIZE - MARGIN_RIGHT
     Bars(
-      Bar(colors, Player.Black, x - 5, MARGIN_TOP + PLAYER_BOX_WIDTH / 2),
-      Bar(colors, Player.White, x - 5, y2)
+      Bar(frame.colors, Player.Black, x, y),
+      Bar(frame.colors, Player.White, x, frame.height - y)
     )
   }
 }
