@@ -1,4 +1,4 @@
-package de.htwg.se.backgammon.view.component.util
+package de.htwg.se.backgammon.view.component
 
 import scalafx.scene.Group
 import scalafx.scene.shape.Rectangle
@@ -30,12 +30,11 @@ class PlayerState(using cf: PlayerConfiguration) extends Group {
     set(Player.White)
   }
 
-  def set(player: Player) =
+  def set(player: Player): Unit =
     emojis.foreach(emoji => emoji._2.setVisible(emoji._1 == player))
 
-  def set(player: Player, emoji: String) = {
-    emojis(player).setText(emoji)
-    emojis.foreach(emoji => emoji._2.setVisible(emoji._1 == player))
+  def set(player: Player, emoji: String): Unit = {
+    emojis(player).setText(emoji); set(player)
   }
 
   def add(children: Seq[Rectangle]) =
