@@ -4,7 +4,22 @@
 
 ![Screenshot from game](src/main/resources/screenshot.jpeg)
 
-Scala Backgammon is an open-source project that implements the classic board game Backgammon using the Scala programming language. This project aims to provide a scalable, maintainable, and extensible codebase for Backgammon enthusiasts and developers alike.
+This is an open-source project that implements the classic board game Backgammon using the Scala programming language. This project aims to provide a scalable, maintainable, and extensible codebase for Backgammon enthusiasts and developers alike.
+
+## Data Storage
+
+This project supports data storage in both JSON and XML formats. You can save and load your game data using the provided serialization functionalities. Simply import the corresponding class into the `de.htwg.se.backgammon.Main` class.
+1. json: `import de.htwg.se.backgammon.model.storage.JsonStorage.{given}`
+2. xml: `import de.htwg.se.backgammon.model.storage.XmlStorage.{given}`
+By implementing the following `Storage` trait,
+you gain the flexibility to effortlessly support various serialization formats.
+```scala
+trait Storage
+ def load[O <: Storable](parser: Parser[_ <: Storable], path: String): Try[O]
+ def fileExtension: String
+ def parse[O <: Storable](obj: O): String 
+```
+
 
 ## Contributing
 
