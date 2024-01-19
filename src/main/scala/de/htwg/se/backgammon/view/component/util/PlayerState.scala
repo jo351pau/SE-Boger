@@ -64,7 +64,7 @@ class PlayerState(using cf: PlayerConfiguration) extends Group {
       arcHeight = CORNER_RADIUS
     }
     val border = new Rectangle {
-      stroke = CustomColor.c1
+      stroke = Color.rgb(1, 25, 54)
       fill = null
       x = cf.xCoord
       y = _y
