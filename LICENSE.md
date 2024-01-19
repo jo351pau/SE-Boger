@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2023 jo351pau
+Copyright (c) 2024 (Lars Schlageter, Johanna Pauler)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
