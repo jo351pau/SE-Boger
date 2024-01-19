@@ -1,10 +1,12 @@
 # Backgammon
 
-[![Coverage Status](https://coveralls.io/repos/github/jo351pau/SE-Boger/badge.svg?branch=main)](https://coveralls.io/github/jo351pau/SE-Boger?branch=main)
+[![Coverage Status](https://coveralls.io/repos/github/jo351pau/SE-Boger/badge.svg?branch=main)](https://coveralls.io/github/jo351pau/SE-Boger?branch=main)[![Build Status](https://img.shields.io/github/workflow/status/jo351pau/SE-Boger/Scala%20CI?label=Build&logo=github)](https://github.com/jo351pau/SE-Boger/actions/workflows/build_and_test.yml)
+
 
 ![Screenshot from game](src/main/resources/screenshot.jpeg)
 
 This is an open-source project that implements the classic board game Backgammon using the Scala programming language. This project aims to provide a scalable, maintainable, and extensible codebase for Backgammon enthusiasts and developers alike.
+Download the latest JAR from [Actions](https://github.com/yourusername/your-repo-name/actions).
 
 ## Data Storage
 
@@ -16,10 +18,11 @@ This project supports data storage in both JSON and XML formats. You can save an
 By implementing the following `Storage` trait,
 you gain the flexibility to effortlessly support various serialization formats.
 ```scala
-trait Storage
+trait Storage {
  def load[O <: Storable](parser: Parser[_ <: Storable], path: String): Try[O]
  def fileExtension: String
  def parse[O <: Storable](obj: O): String 
+}
 ```
 
 ## Customizable Appearance
