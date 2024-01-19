@@ -20,8 +20,16 @@ jobs:
        cache: 'sbt'
    - name: Run tests
      run: sbt test
+   - name: Download and install JavaFX
+     run: |
+       wget https://gluonhq.com/download/javafx-14.0.2-sdk-linux/
+       unzip javafx-sdk-14.0.2.zip -d $HOME
+       echo "export PATH=$PATH:$HOME/javafx-sdk-14.0.2/lib" >> $HOME/.bashrc
+       shell: bash
    - name: Assembly | Build JAR
      run: sbt clean assembly
+     env:
+       JAVA_OPTS: "-Djavafx.verbose=true" 
    - name: Upload JAR artifact
      uses: actions/upload-artifact@v4
      with:
