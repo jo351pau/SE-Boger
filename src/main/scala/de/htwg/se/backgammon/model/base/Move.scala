@@ -47,7 +47,7 @@ class BearInMove(val player: Player, steps: Int)
 }
 
 class BearOffMove(from: Int, steps: Int) extends Move(from, steps) {
-  def isValid(game: Game) = game(from).occupier match {
+  def isValid(game: IGame) = game(from).occupier match {
     case Player.White => whereToGo(game) == game.length
     case _            => whereToGo(game) == -1
   }

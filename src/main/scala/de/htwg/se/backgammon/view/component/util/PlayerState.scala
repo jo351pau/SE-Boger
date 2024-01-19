@@ -33,6 +33,11 @@ class PlayerState(using cf: PlayerConfiguration) extends Group {
   def set(player: Player) =
     emojis.foreach(emoji => emoji._2.setVisible(emoji._1 == player))
 
+  def set(player: Player, emoji: String) = {
+    emojis(player).setText(emoji)
+    emojis.foreach(emoji => emoji._2.setVisible(emoji._1 == player))
+  }
+
   def add(children: Seq[Rectangle]) =
     children.foreach(c => this.children.add(c))
 

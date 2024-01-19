@@ -55,12 +55,16 @@ import de.htwg.se.backgammon.controller.IController
 import de.htwg.se.backgammon.model.base.Game
 import de.htwg.se.backgammon.model.base.Move
 import de.htwg.se.backgammon.view.component.configuration.Default.{given}
+import javafx.animation.AnimationTimer
+import de.htwg.se.backgammon.view.component.util.WinAnimation
+import de.htwg.se.backgammon.model.base.BearOffMove
 
 class GUI(controller: IController) extends JFXApp3 with Observer {
   controller.add(this)
 
   var pane: Pane = null
   var draggedChecker: DraggedChecker = DraggedChecker.empty
+  var winAnimation: WinAnimation = null
 
   val board: Board = Board()
   val playerState: PlayerState = PlayerState()
@@ -79,7 +83,14 @@ class GUI(controller: IController) extends JFXApp3 with Observer {
     case Event.InvalidMove =>
       println(exception.getOrElse(MoveException()).getMessage())
       draggedChecker.reset()
-    case _ =>
+    case Event.GameOver => onGameOver(controller.game.winner.get)
+    case _              =>
+  }
+
+  def onGameOver(winner: Player) = {
+    winAnimation.start
+    playerState.set(winner, "🏆")
+    stage.title = s"Backgammon - Congratulation to $winner!!"
   }
 
   def onMove(game: IGame) = {
@@ -105,11 +116,17 @@ class GUI(controller: IController) extends JFXApp3 with Observer {
           board.setGame(controller.game)
           dice.create(2)
 
+          val canvas = new Canvas(
+            given_FrameConfiguration.width,
+            given_FrameConfiguration.height
+          )
+          winAnimation = WinAnimation(canvas)
           children = Seq(
             board,
             playerState,
             bars,
-            dice
+            dice,
+            canvas
           )
         }
 
@@ -157,9 +174,24 @@ class GUI(controller: IController) extends JFXApp3 with Observer {
     case checker: Checker
         if draggedChecker.isEmpty
           && checker.player == controller.currentPlayer => {
-      draggedChecker = new DraggedChecker(checker)
-      pane.children.add(draggedChecker)
+      canBearOff(checker) match {
+        case Some(move: BearOffMove) =>
+          controller.doAndPublish(controller.put, move)
+        case _ => {
+          draggedChecker = new DraggedChecker(checker)
+          pane.children.add(draggedChecker)
+        }
+      }
     }
     case _ =>
+  }
+
+  def canBearOff(checker: Checker): Option[BearOffMove] = {
+    if (!controller.hasToBearOff) then None
+    else {
+      val from = board.indexOf(checker.point)
+      val moves = controller.dice.map(die => BearOffMove(from, die))
+      moves.find(m => m.isValid(controller.game))
+    }
   }
 }
