@@ -18,8 +18,15 @@ jobs:
        java-version: '11'
        distribution: 'adopt'
        cache: 'sbt'
-   - name: run tests
+   - name: Run tests
      run: sbt test
+   - name: Assembly | Build JAR
+     run: sbt clean assembly
+   - name: Upload JAR artifact
+     uses: actions/upload-artifact@v4
+     with:
+       name: backgammon
+       path: target/scala-3.3.1/backgammon.jar
  run_tests:
    runs-on: ubuntu-latest
    steps:

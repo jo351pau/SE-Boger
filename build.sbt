@@ -14,3 +14,9 @@ lazy val root = project
     libraryDependencies += "org.scala-lang.modules" %% "scala-xml" % "2.2.0",
     libraryDependencies += "com.typesafe.play" %% "play-json" % "2.10.3"
   )
+
+assemblyJarName in assembly := "backgammon.jar"
+assemblyMergeStrategy in assembly := {
+ case PathList("META-INF", _*) => MergeStrategy.discard
+ case _                        => MergeStrategy.first
+}
