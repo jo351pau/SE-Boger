@@ -55,14 +55,14 @@ case class Controller(private val model: IModel) extends IController {
       case None                        => return
       case Some(GameState(game, move)) => (game, move)
     }
-    model.dice =
-      if (model.dice.length == MOVES_PER_ROUND)
-      then List(move.steps)
-      else model.dice.::(move.steps)
+    if (model.dice.length == MOVES_PER_ROUND) {
+      model.dice = List(move.steps)
+      nextTurn()
+    } else {
+      model.dice = model.dice.::(move.steps)
+    }
 
     this.game = game
-
-    if (model.dice.length == 1) nextTurn()
   }
 
   def handle(game: IGame, steps: Int) = {
