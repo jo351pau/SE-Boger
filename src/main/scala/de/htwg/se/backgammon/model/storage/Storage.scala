@@ -8,6 +8,7 @@ import scala.io.Source
 import play.api.libs.json.JsValue
 import play.api.libs.json.Json
 import scala.reflect.ClassTag
+import scala.util.boundary
 
 object XmlStorage {
   given Storage = XmlStorage()
@@ -30,8 +31,7 @@ trait Storage {
       pw.write(parse(obj, Parser.get(clazz)))
     }.fold(
       ex => println(s"Error writing to file: ${ex.getMessage}!"),
-      _ =>
-        println(s"Data (${obj.getClass().getSimpleName()}) saved successfully.")
+      _ => boundary
     )
   }
 
