@@ -45,15 +45,16 @@ trait ColorPalette {
 ## Customizable Size and Resolution
 Customize the application's size and resolution in the `de.htwg.se.backgammon.view.component.configuration.Default` class. Easily locate and adjust properties or methods to fine-tune the user interface dimensions to your preferences.
 
-## Personalize Your Backgammon Experience
+## Customizable Backgammon Experience
 
-1. Whether you prefer a smaller board for faster gameplay or want to experiment with diverse game figure quantities, the flexibility is yours. Simply adjust these variables in the `Main` class to redefine your gaming environment.
+Whether you prefer a smaller board for faster gameplay or want to experiment with diverse game figure quantities, the flexibility is yours. Simply adjust these variables in the `Main` class to redefine your gaming environment.
 ```scala
 val NUMBER_OF_FIELDS = 24
 val NUMBER_OF_FIGURES = 15
 ```
-2. Customize the starting distribution of the game figures by using a `CustomSetup`.
-3. Edit the game structure according to your preferences using the XML/JSON file. 
+#### Additional Options
+1. Customize the starting distribution of the game figures by using a `CustomSetup`.
+2. Edit the game structure according to your preferences using the XML/JSON file. 
 
 
 ## Contributing
