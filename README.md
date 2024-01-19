@@ -10,7 +10,7 @@ This is an open-source project that implements the classic board game Backgammon
 
 This project supports data storage in both JSON and XML formats. You can save and load your game data using the provided serialization functionalities. Simply import the corresponding class into the `de.htwg.se.backgammon.Main` class.
 1. json: `import de.htwg.se.backgammon.model.storage.JsonStorage.{given}`
-2. xml: `import de.htwg.se.backgammon.model.storage.XmlStorage.{given}`  
+2. xml: `import de.htwg.se.backgammon.model.storage.XmlStorage.{given}`   
 By implementing the following `Storage` trait,
 you gain the flexibility to effortlessly support various serialization formats.
 ```scala
@@ -21,7 +21,7 @@ trait Storage
 ```
 
 ## Customizable Appearance
-The Scala Backgammon application offers an easily customizable appearance through the `ColorPalette` trait. This trait allows you to define color schemes, enabling you to personalize the visual style of the game. By implementing the `ColorPalette` trait, you can override specific color properties to tailor the look and feel according to your preferences.
+The Scala Backgammon application offers an easily customizable appearance through the `ColorPalette` trait. This trait allows you to define color schemes, enabling you to personalize the visual style of the game. By implementing the `ColorPalette` trait, you can override specific color properties to tailor the look and feel according to your preferences.  
 **In an upcoming release, we plan to introduce the ability to determine the color scheme through a configuration file.**
 ```scala
 trait ColorPalette {
@@ -42,6 +42,16 @@ trait ColorPalette {
 
 ## Customizable Size and Resolution
 Customize the application's size and resolution in the `de.htwg.se.backgammon.view.component.configuration.Default` class. Easily locate and adjust properties or methods to fine-tune the user interface dimensions to your preferences.
+
+## Personalize Your Backgammon Experience
+1. Whether you prefer a smaller board for faster gameplay or want to experiment with diverse game figure quantities, the flexibility is yours. Simply adjust these variables in the `Main` class to redefine your gaming environment.
+```scala
+val NUMBER_OF_FIELDS = 24
+val NUMBER_OF_FIGURES = 15
+```
+2. Customize the starting distribution of the game figures by using a `CustomSetup`.
+3. Edit the game structure according to your preferences using the XML/JSON file. 
+
 
 ## Contributing
 
