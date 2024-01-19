@@ -6,7 +6,6 @@
 ![Screenshot from game](src/main/resources/screenshot.jpeg)
 
 This is an open-source project that implements the classic board game Backgammon using the Scala programming language. This project aims to provide a scalable, maintainable, and extensible codebase for Backgammon enthusiasts and developers alike.
-Download the latest JAR from [Actions](https://github.com/yourusername/your-repo-name/actions).
 
 ## Data Storage
 
