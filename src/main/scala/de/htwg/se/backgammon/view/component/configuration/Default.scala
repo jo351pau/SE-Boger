@@ -25,6 +25,7 @@ case class DefaultPointConfiguration(
     colors: ColorPalette = Default.given_ColorPalette
 ) extends PointConfiguration {
   val height = (boardSize.height / 2) * 0.9
+  val margin = 5
 }
 
 case class DefaultBoardConfiguration(

@@ -40,4 +40,5 @@ trait PlayerConfiguration extends Configuration {
 trait PointConfiguration extends Configuration {
   def boardSize: Size
   def height: Double
+  def margin: Double
 }

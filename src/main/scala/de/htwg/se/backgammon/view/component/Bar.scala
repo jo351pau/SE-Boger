@@ -3,9 +3,6 @@ package de.htwg.se.backgammon.view.component
 import scalafx.scene.Group
 import de.htwg.se.backgammon.model.Player
 import scalafx.scene.shape.Rectangle
-import de.htwg.se.backgammon.view.component.util.CustomColor
-import de.htwg.se.backgammon.view.component.util.PLAYER_BOX_WIDTH
-import de.htwg.se.backgammon.view.component.util.CORNER_RADIUS
 import scalafx.scene.effect.GaussianBlur
 import scalafx.scene.paint.Color
 import scalafx.scene.input.MouseEvent

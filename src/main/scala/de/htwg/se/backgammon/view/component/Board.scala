@@ -11,10 +11,10 @@ import de.htwg.se.backgammon.model.Player
 import javafx.scene.input.MouseEvent
 import de.htwg.se.backgammon.view.GUI
 import scalafx.scene.Group
-import de.htwg.se.backgammon.view.component.util.CustomColor
 import de.htwg.se.backgammon.view.component.configuration.BoardConfiguration
 import de.htwg.se.backgammon.view.component.configuration.ColorPalette
 import de.htwg.se.backgammon.view.component.configuration.PointConfiguration
+import de.htwg.se.backgammon.view.component.configuration.Configuration
 
 class Board(using conf: BoardConfiguration) extends Pane {
   val (size, xCoord, yCoord, lineWidth, colors) =
@@ -40,7 +40,7 @@ class Board(using conf: BoardConfiguration) extends Pane {
 
   def setGame(game: IGame)(using pointCf: PointConfiguration) = {
     if (game.length != points.length) {
-      points.set(Board.createPoints(this, game.length, pointCf.height))
+      points.set(Board.createPoints(this, game.length, pointCf))
     }
     game.fields.zipWithIndex
       .map { case (v, i) => (i, v) }
@@ -87,14 +87,14 @@ class Board(using conf: BoardConfiguration) extends Pane {
 }
 
 object Board {
-  def margin(index: Int) =
-    if index == 0 then 0 else Configuration.pointMargin * index
+  def margin(index: Int, pointMargin: Double) =
+    if index == 0 then 0 else pointMargin * index
 
-  def totalMargin(pointsPerSide: Int) =
-    (pointsPerSide - 1) * Configuration.pointMargin
+  def totalMargin(pointsPerSide: Int, pointMargin: Double) =
+    (pointsPerSide - 1) * pointMargin
 
-  def determineWidth(width: Double, pointsPerSide: Int): Double =
-    (width - totalMargin(pointsPerSide)) / pointsPerSide
+  def determineWidth(width: Double, pointsPerSide: Int, pointMargin: Double): Double =
+    (width - totalMargin(pointsPerSide, pointMargin)) / pointsPerSide
 
   def color(side: Int, position: Int, colors: ColorPalette) = {
     if (side == 1) {
@@ -115,11 +115,12 @@ object Board {
     else ((pointsPerSide - 1) to 0) by -1
   }
 
-  def createPoints(board: Board, number: Int, height: Double) = {
+  def createPoints(board: Board, number: Int, pointCf: PointConfiguration) = {
     val (size, xCoord, yCoord) = (board.size, board.xCoord, board.yCoord)
 
     val pointsPerSide = (number / 2)
-    val width = determineWidth(size.width, pointsPerSide)
+    val width = determineWidth(size.width, pointsPerSide, pointCf.margin)
+    val height = pointCf.height
 
     val baseY = yCoord + size.height
     val topSideY = Array(yCoord, yCoord, yCoord + height)
@@ -128,7 +129,7 @@ object Board {
     (0 to 1).flatMap { side =>
       createSideRange(side, pointsPerSide).map(index =>
         Point(
-          createXArray(xCoord, index, width).map(_ + margin(index)),
+          createXArray(xCoord, index, width).map(_ + margin(index, pointCf.margin)),
           if side == 1 then topSideY else bottomSideY,
           size = Size(width, height),
           color(side, index, board.colors),

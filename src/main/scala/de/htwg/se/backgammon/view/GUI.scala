@@ -32,12 +32,11 @@ import de.htwg.se.backgammon.model.IGame
 import scalafx.scene.layout.Pane
 import scalafx.scene.input.MouseEvent
 import scalafx.scene.shape.Circle
-import de.htwg.se.backgammon.view.component.Configuration
 import de.htwg.se.backgammon.view.component.Checker
 import de.htwg.se.backgammon.view.component.util.DraggedChecker
 import scalafx.application.HostServices
 import de.htwg.se.backgammon.view.component.*
-import de.htwg.se.backgammon.view.component.util.PlayerState
+import de.htwg.se.backgammon.view.component.PlayerState
 import scalafx.scene.shape.DrawMode
 import de.htwg.se.backgammon.model.Player
 import de.htwg.se.backgammon.model.IMove
@@ -129,6 +128,7 @@ class GUI(controller: IController) extends JFXApp3 with Observer {
             canvas
           )
         }
+
 
         onMouseClicked = (event: MouseEvent) => {
           board.handleMouseEvent(event, onClicked = onBoardClicked)
