@@ -10,7 +10,7 @@ This is an open-source project that implements the classic board game Backgammon
 
 This project supports data storage in both JSON and XML formats. You can save and load your game data using the provided serialization functionalities. Simply import the corresponding class into the `de.htwg.se.backgammon.Main` class.
 1. json: `import de.htwg.se.backgammon.model.storage.JsonStorage.{given}`
-2. xml: `import de.htwg.se.backgammon.model.storage.XmlStorage.{given}`
+2. xml: `import de.htwg.se.backgammon.model.storage.XmlStorage.{given}`  
 By implementing the following `Storage` trait,
 you gain the flexibility to effortlessly support various serialization formats.
 ```scala
@@ -20,6 +20,28 @@ trait Storage
  def parse[O <: Storable](obj: O): String 
 ```
 
+## Customizable Appearance
+The Scala Backgammon application offers an easily customizable appearance through the `ColorPalette` trait. This trait allows you to define color schemes, enabling you to personalize the visual style of the game. By implementing the `ColorPalette` trait, you can override specific color properties to tailor the look and feel according to your preferences.
+**In an upcoming release, we plan to introduce the ability to determine the color scheme through a configuration file.**
+```scala
+trait ColorPalette {
+
+  // Board
+  def boardBackground: Color
+  def boardGrid: Color
+
+  // Field 
+  def field: Color
+  def field_1: Color
+
+  // Checkers
+  def checkersWhite: Color
+  def checkersBlack: Color
+}
+```
+
+## Customizable Size and Resolution
+Customize the application's size and resolution in the `de.htwg.se.backgammon.view.component.configuration.Default` class. Easily locate and adjust properties or methods to fine-tune the user interface dimensions to your preferences.
 
 ## Contributing
 
