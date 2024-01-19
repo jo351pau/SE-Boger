@@ -31,6 +31,9 @@ class ControllerSpec extends AnyWordSpec {
     "a whole game should work " in {
       val controller = Controller(m)
 
+      controller.doAndPublish(controller.redo) // nothing to redo
+      controller.game.fields shouldBe List(2, 0, 0, -1, 1, 0, 0, -2)
+
       // White moves (1,2)
       controller.doAndPublish(controller.put, Move(0, 1))
       controller.game.fields shouldBe List(1, 1, 0, -1, 1, 0, 0, -2)
@@ -42,35 +45,59 @@ class ControllerSpec extends AnyWordSpec {
       // Black moves(5,5)
       controller.doAndPublish(controller.put, Move(7, 5))
       controller.doAndPublish(controller.put, Move(7, 5))
+      controller.doAndPublish(controller.redo)
       controller.game.fields shouldBe List(0, 1, -2, -1, 1, 0, 0, 0)
       controller.game.barWhite shouldBe 1
 
+      // Black moves(3,2) doublets
+      controller.doAndPublish(controller.put, Move(3, 3))
+      controller.game.fields shouldBe List(-1, 1, -2, 0, 1, 0, 0, 0)
+      controller.doAndPublish(controller.put, Move(2, 2))
+      controller.game.fields shouldBe List(-2, 1, -1, 0, 1, 0, 0, 0)
+
       // White moves(3,2)
       controller.doAndPublish(controller.put, BearInMove(Player.White, 2))
-      controller.game.barWhite shouldBe 0
-      controller.skip(3)
-      controller.game.fields shouldBe List(0, 2, -2, -1, 1, 0, 0, 0)
-
-      // Black moves (3,2)
-      controller.doAndPublish(controller.put, Move(3, 3))
-      controller.game.fields shouldBe List(-1, 2, -2, 0, 1, 0, 0, 0)
-      controller.doAndPublish(controller.put, Move(2, 2))
       controller.game.fields shouldBe List(-2, 2, -1, 0, 1, 0, 0, 0)
+      controller.game.barWhite shouldBe 0
+      controller.doAndPublish(controller.put, Move(1, 3))
+      controller.game.fields shouldBe List(-2, 1, -1, 0, 2, 0, 0, 0)
 
-      // White moves(4,4)
+      // Black moves (1,2)
+      controller.dice shouldBe List(1, 2)
+      controller.doAndPublish(controller.put, BearOffMove(0, 1))
+      controller.game.fields shouldBe List(-1, 1, -1, 0, 2, 0, 0, 0)
+      controller.doAndPublish(controller.put, Move(2, 2))
+      controller.game.fields shouldBe List(-2, 1, 0, 0, 2, 0, 0, 0)
+
+      // White moves(4,3)
+      controller.dice shouldBe List(4, 3)
       controller.doAndPublish(controller.put, Move(1, 4))
-      controller.game.fields shouldBe List(-2, 1, -1, 0, 1, 1, 0, 0)
-      controller.doAndPublish(controller.redo)
-      controller.game.fields shouldBe List(-2, 0, -1, 0, 1, 2, 0, 0)
+      controller.game.fields shouldBe List(-2, 0, 0, 0, 2, 1, 0, 0)
 
-      // Black moves(1,2)
-      controller.doAndPublish(controller.put, Move(2, 1))
-      controller.game.fields shouldBe List(-2, -1, 0, 0, 1, 2, 0, 0)
-      controller.doAndPublish(controller.put, BearOffMove(1, 2))
-
-      // White moves(3,5)
-      controller.doAndPublish(controller.put, Move(2, 1))
+      // undo
       controller.undoAndPublish(controller.undo)
+      controller.game.fields shouldBe List(-2, 1, 0, 0, 2, 0, 0, 0)
+
+      // do same again
+      controller.doAndPublish(controller.put, Move(1, 4))
+      controller.game.fields shouldBe List(-2, 0, 0, 0, 2, 1, 0, 0)
+
+      // ** do step and undo
+      controller.dice shouldBe List(3)
+      controller.doAndPublish(controller.put, Move(4, 3))
+      controller.game.fields shouldBe List(-2, 0, 0, 0, 1, 1, 0, 1)
+      // **
+
+      // Black moves(1,1)
+      controller.currentPlayer shouldBe Player.Black
+      controller.doAndPublish(controller.put, BearOffMove(0, 1))
+      controller.game.fields shouldBe List(-1, 0, 0, 0, 1, 1, 0, 1)
+
+      controller.doAndPublish(controller.put, BearOffMove(0, 1))
+      controller.game.fields shouldBe List(0, 0, 0, 0, 1, 1, 0, 1)
+
+      // ** Game finished - Black won **//
+      controller.game.winner.get shouldBe Player.Black
     }
   }
 
@@ -78,7 +105,7 @@ class ControllerSpec extends AnyWordSpec {
     Model(
       new Game(CustomSetup(List(2, 0, 0, -1))),
       Player.White,
-      DiceStub(1, 2, 5, 5, 3, 2, 3, 2, 4, 4, 1, 2, 3, 5)
+      DiceStub(1, 2, 5, 5, 3, 2, 3, 2, 1, 2, 4, 3, 1, 1, 3, 5)
     )
   }
 

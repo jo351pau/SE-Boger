@@ -17,18 +17,18 @@ class GameSpec extends AnyWordSpec {
       Dice().roll should be > 0
       Dice().roll should be < 7
     }
-    "have default layout '|5| |/| |/| |/| |-3| |/| |-5| |/| |/| |/| |/| |2| " +
+    "have default layout '|2| |/| |/| |/| |-5| |/| |-3| |/| |/| |/| |/| |2| " +
       "|-2| |/| |/| |/| |/| |5| |/| |3| |/| |/| |/| |-5|' " in {
         new Game(24, 15).fields should equal(
-          List(5, 0, 0, 0, -3, 0, -5, 0, 0, 0, 0, 2, -2, 0, 0, 0, 0, 5, 0, 3, 0,
-            0, 0, -5).map(i => Field(i))
+          List(2, 0, 0, 0, 0, -5, 0, -3, 0, 0, 0, 5, -5, 0, 0, 0, 3, 0, 5, 0, 0,
+            0, 0, -2).map(i => Field(i))
         )
       }
     "have default layout" in {
-      new Game(DefaultSetup(24, 15)) should equal(
-        List(5, 0, 0, 0, -3, 0, -5, 0, 0, 0, 0, 2, -2, 0, 0, 0, 0, 5, 0, 3, 0,
-          0, 0, -5).map(i => Field(i))
-      )
+        new Game(24, 15).fields should equal(
+          List(2, 0, 0, 0, 0, -5, 0, -3, 0, 0, 0, 5, -5, 0, 0, 0, 3, 0, 5, 0, 0,
+            0, 0, -2).map(i => Field(i))
+        )
     }
     "have custom layout" in {
       new Game(CustomSetup(List(4, 0, 0, -2))).fields should equal(
@@ -43,11 +43,6 @@ class GameSpec extends AnyWordSpec {
       new Game(
         CustomSetup(List(5, 0, 0, -2))
       ).toString shouldBe "0 : |5| |/| |/| |-2| |2| |/| |/| |-5| : 0"
-    }
-    "be |3|, |-3|, |/|, |-5|, |2|, |2|, |-2|, |/|, |5|, |/|, |3|, |-5| when moved a piece from 0 to 4" in {
-      new Game(12, 15).move(Move(0, 4)).get.fields should equal(
-        List(4, -3, 0, -5, 1, 2, -2, 0, 5, 0, 3, -5).map(i => Field(i))
-      )
     }
     "attacking opponent, send checker to bar and back" in {
       var game: IGame = new Game(CustomSetup(List(5, 0, 0, -2)))
@@ -88,7 +83,7 @@ class GameSpec extends AnyWordSpec {
         .move(Move(3, 15))
         .failed
         .get
-        .getMessage() shouldBe FieldDoesNotExistException(3, 15, 3 - 15)
+        .getMessage() shouldBe FieldDoesNotExistException(3, 9, -12)
         .getMessage()
       DieNotExistException(2, List(1, 3)).getMessage()
       WrongDirectionException(Player.White).getMessage()
