@@ -1,9 +1,7 @@
 package de.htwg.se.backgammon.view.component
 
 import de.htwg.se.backgammon.model.IGame
-import de.htwg.se.backgammon.view.component.util.MARGIN_TOP
 import de.htwg.se.backgammon.model.Player
-import de.htwg.se.backgammon.view.component.util.PLAYER_BOX_WIDTH
 import scalafx.scene.input.MouseEvent
 import de.htwg.se.backgammon.view.component.configuration.ColorPalette
 import de.htwg.se.backgammon.view.component.configuration.FrameConfiguration

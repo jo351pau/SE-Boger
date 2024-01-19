@@ -36,7 +36,7 @@ import de.htwg.se.backgammon.view.component.Checker
 import de.htwg.se.backgammon.view.component.util.DraggedChecker
 import scalafx.application.HostServices
 import de.htwg.se.backgammon.view.component.*
-import de.htwg.se.backgammon.view.component.util.PlayerState
+import de.htwg.se.backgammon.view.component.PlayerState
 import scalafx.scene.shape.DrawMode
 import de.htwg.se.backgammon.model.Player
 import de.htwg.se.backgammon.model.IMove

@@ -9,7 +9,6 @@ import de.htwg.se.backgammon.model.Player
 import de.htwg.se.backgammon.view.component.configuration.PlayerConfiguration
 
 val MARGIN_TOP = 25
-val MARGIN_RIGHT = 25
 val PLAYER_BOX_WIDTH = 50
 val CORNER_RADIUS = 5
 
