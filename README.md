@@ -1,6 +1,6 @@
 # Backgammon
 
-[![Coverage Status](https://coveralls.io/repos/github/jo351pau/SE-Boger/badge.svg?branch=main)](https://coveralls.io/github/jo351pau/SE-Boger?branch=main)[![Build Status](https://img.shields.io/github/workflow/status/jo351pau/SE-Boger/Scala%20CI?label=Build&logo=github)](https://github.com/jo351pau/SE-Boger/actions/workflows/build_and_test.yml)
+[![Coverage Status](https://coveralls.io/repos/github/jo351pau/SE-Boger/badge.svg?branch=main)](https://coveralls.io/github/jo351pau/SE-Boger?branch=main)[![Build Status](https://img.shields.io/github/actions/workflow/status/jo351pau/SE-Boger/build_and_test.yml?branch=main)](https://github.com/jo351pau/SE-Boger/actions/workflows/build_and_test.yml)
 
 
 ![Screenshot from game](src/main/resources/screenshot.jpeg)
