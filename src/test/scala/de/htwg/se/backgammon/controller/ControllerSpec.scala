@@ -11,6 +11,8 @@ import de.htwg.se.backgammon.model.base.CustomSetup
 import de.htwg.se.backgammon.model.DiceStub
 import de.htwg.se.backgammon.model.base.BearInMove
 import de.htwg.se.backgammon.model.base.BearOffMove
+import de.htwg.se.backgammon.util.Observer
+import de.htwg.se.backgammon.util.Event
 
 class ControllerSpec extends AnyWordSpec {
   "Controller" should {
@@ -26,6 +28,17 @@ class ControllerSpec extends AnyWordSpec {
       c.doAndPublish(c.put, Move(0, 2))
       c.currentPlayer shouldBe Player.Black
 
+    }
+
+    "observer notify on move" in {
+      val controller = Controller(m)
+      var notified = false
+      controller.add(new Observer {
+        override def update(e: Event, exception: Option[Throwable]): Unit =
+          notified = true
+      })
+      controller.doAndPublish(controller.put, Move(0, 1))
+      notified shouldBe true
     }
 
     "a whole game should work " in {
