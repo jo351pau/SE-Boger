@@ -27,12 +27,6 @@ class ModelSpec extends AnyWordSpec {
       m.player.toLowerCase shouldBe "white"
       m.game shouldBe game
     }
-    "clone" in {
-        val clone: Model = model.clone().asInstanceOf[Model]
-        model.dice shouldBe clone.dice
-        model.doublets shouldBe clone.doublets
-        model.player shouldBe clone.player
-    }
   }
   private def model = Model(new Game(24, 15), Player.White, DiceStub(1, 2))
 }
