@@ -52,12 +52,6 @@ case class Model(
   def game = _game
 
   var movesThisRound: List[IGame] = Nil
-
-  override def clone() = {
-    var model = new Model(game, player, diceStrategy)
-    model.dice = dice; model
-  }
-
 }
 
 object Model {
