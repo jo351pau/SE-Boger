@@ -57,6 +57,7 @@ import de.htwg.se.backgammon.view.component.configuration.Default.{given}
 import javafx.animation.AnimationTimer
 import de.htwg.se.backgammon.view.component.util.WinAnimation
 import de.htwg.se.backgammon.model.base.BearOffMove
+import scalafx.event.ActionEvent
 
 class GUI(controller: IController) extends JFXApp3 with Observer {
   controller.add(this)
@@ -70,6 +71,7 @@ class GUI(controller: IController) extends JFXApp3 with Observer {
   val dice: Dice = Dice()
 
   val bars: Bars = Bars.createDefault()
+  val skipButton: Button = SkipButton()
 
   override def update(event: Event, exception: Option[Throwable]): Unit = {
     Platform.runLater(onEvent(event, exception))
@@ -95,6 +97,7 @@ class GUI(controller: IController) extends JFXApp3 with Observer {
   def onMove(game: IGame) = {
     board.setGame(game); bars.setGame(game)
     draggedChecker.reset()
+    skipButton.visible = !controller.existsPossibleMoves
   }
 
   def onPlayerChanged(current: Player) = {
@@ -120,15 +123,19 @@ class GUI(controller: IController) extends JFXApp3 with Observer {
             given_FrameConfiguration.height
           )
           winAnimation = WinAnimation(canvas)
+          skipButton.onAction = (event: ActionEvent) => {
+            controller.skip(controller.die)
+            skipButton.visible = !controller.existsPossibleMoves
+          }
           children = Seq(
             board,
             playerState,
             bars,
             dice,
-            canvas
+            canvas,
+            skipButton
           )
         }
-
 
         onMouseClicked = (event: MouseEvent) => {
           board.handleMouseEvent(event, onClicked = onBoardClicked)
@@ -146,6 +153,7 @@ class GUI(controller: IController) extends JFXApp3 with Observer {
           dice.roll(controller.dice)
           bars.setGame(controller.game)
           onPlayerChanged(controller.currentPlayer)
+          skipButton.visible = !controller.existsPossibleMoves
         }
 
         content = pane
@@ -190,8 +198,11 @@ class GUI(controller: IController) extends JFXApp3 with Observer {
     if (!controller.hasToBearOff) then None
     else {
       val from = board.indexOf(checker.point)
-      val moves = controller.dice.map(die => BearOffMove(from, die))
-      moves.find(m => m.isValid(controller.game))
+      if (from == -1) then None
+      else {
+        val moves = controller.dice.map(die => BearOffMove(from, die))
+        moves.find(m => m.isValid(controller.game))
+      }
     }
   }
 }

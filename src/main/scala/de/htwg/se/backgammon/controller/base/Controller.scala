@@ -26,6 +26,9 @@ import de.htwg.se.backgammon.model.base.NoMove
 import de.htwg.se.backgammon.exception.NoMoveException
 import de.htwg.se.backgammon.controller.IController
 import de.htwg.se.backgammon.controller.PutCommand
+import de.htwg.se.backgammon.model.base.BearInMove
+import de.htwg.se.backgammon.model.base.Move
+import scala.util.boundary
 
 case class Controller(private val model: IModel) extends IController {
   def game = model.game
@@ -120,6 +123,26 @@ case class Controller(private val model: IModel) extends IController {
         notifyObservers(Event.InvalidMove, Some(ex)); false
       case _ => true
     }
+
+  def existsPossibleMoves: Boolean = {
+    val movePossible = if (checkersInBar) {
+      val move = BearInMove(currentPlayer, die)
+      ValidateMoveStrategy(this, move)
+        .execute()
+        .fold(_ => false, _ => game.move(move).isSuccess)
+    } else {
+      game.fields.zipWithIndex
+        .filter { case (field, _) => field.isOccupiedBy(currentPlayer) }
+        .exists { case (field, index) =>
+          val move = Move(index, die)
+          ValidateMoveStrategy(this, move)
+            .execute()
+            .fold(_ => false, _ => game.move(move).isSuccess)
+        }
+    }
+
+    movePossible
+  }
 
   def data = model
 }

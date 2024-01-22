@@ -26,5 +26,6 @@ trait IController extends Observable {
   def undo: Option[GameState]
   def quit: Unit
 
+  def existsPossibleMoves: Boolean
   def data: IModel
 }

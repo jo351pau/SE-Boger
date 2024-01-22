@@ -17,7 +17,13 @@ trait ColorPalette {
   def checkersBlack: Color
 }
 
-class PrimaryColorPalette extends ColorPalette{
+object ColorPalette {
+  def toRGBA(color: Color) =
+    s"rgba(${(color.getRed * 255).toInt}, ${(color.getGreen * 255).toInt}, " +
+      s"${(color.getBlue * 255).toInt}, ${(color.getOpacity * 255).toInt})"
+}
+
+class PrimaryColorPalette extends ColorPalette {
 
   // board colors
   val boardBackground = Color.rgb(192, 223, 161)
