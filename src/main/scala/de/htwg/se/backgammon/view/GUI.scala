@@ -58,6 +58,7 @@ import javafx.animation.AnimationTimer
 import de.htwg.se.backgammon.view.component.util.WinAnimation
 import de.htwg.se.backgammon.model.base.BearOffMove
 import scalafx.event.ActionEvent
+import de.htwg.se.backgammon.model.Input.Skip
 
 class GUI(controller: IController) extends JFXApp3 with Observer {
   controller.add(this)
@@ -71,7 +72,7 @@ class GUI(controller: IController) extends JFXApp3 with Observer {
   val dice: Dice = Dice()
 
   val bars: Bars = Bars.createDefault()
-  val skipButton: Button = SkipButton()
+  var skipButton: Button = null;
 
   override def update(event: Event, exception: Option[Throwable]): Unit = {
     Platform.runLater(onEvent(event, exception))
@@ -123,6 +124,7 @@ class GUI(controller: IController) extends JFXApp3 with Observer {
             given_FrameConfiguration.height
           )
           winAnimation = WinAnimation(canvas)
+          skipButton = SkipButton()
           skipButton.onAction = (event: ActionEvent) => {
             controller.skip(controller.die)
             skipButton.visible = !controller.existsPossibleMoves
